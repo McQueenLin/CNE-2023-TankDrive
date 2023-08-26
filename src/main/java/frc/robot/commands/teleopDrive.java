@@ -36,6 +36,7 @@ public class teleopDrive extends CommandBase {
     // tank_Drive.setLeftMotors(m_leftSpeed);
     // tank_Drive.setRightMotors(m_rightSpeed);
     m_Drive.tankDrive(m_Controller.getLeftY() * 0.3, m_Controller.getRightY() * 0.3);
+    
     SmartDashboard.putNumber("leftSpeed", m_Controller.getLeftY());
     SmartDashboard.putNumber("rightSpeed", m_Controller.getRightY());
   }

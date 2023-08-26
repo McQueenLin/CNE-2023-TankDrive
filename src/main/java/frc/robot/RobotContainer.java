@@ -43,11 +43,12 @@ public class RobotContainer {
   JoystickButton operatorLeftModifier = new JoystickButton(operatorController, Button.kBack.value);
   JoystickButton operatorRightBumper = new JoystickButton(operatorController, Button.kRightBumper.value);
   JoystickButton operatorYButton = new JoystickButton(operatorController, Button.kY.value);
-  JoystickButton operatorAButton = new JoystickButton(operatorController, Button.kA.value);
-  JoystickButton operatorBButton = new JoystickButton(operatorController, Button.kB.value);
+   JoystickButton operatorAButton = new JoystickButton(operatorController, Button.kA.value);
+//   JoystickButton operatorBButton = new JoystickButton(operatorController, Button.kB.value);
   JoystickButton operatorXButton = new JoystickButton(operatorController, Button.kX.value);
  
   public tankDrive tank_Drive = new tankDrive();
+  public Hand hand = new Hand();
 
   public teleopDrive tDrive = new teleopDrive(tank_Drive, m_driverController);
   
@@ -57,19 +58,21 @@ public class RobotContainer {
         configureBindings();
     }
  
-    private void configureBindings()
-    {
+  private void configureBindings()
+  {
 
-        System.out.println("Bind");
+      System.out.println("Bind");
 
-        Arm.getInstance().setDefaultCommand(Arm.getInstance().changePos());
+      Arm.getInstance().setDefaultCommand(Arm.getInstance().changePos());
 
-        operatorYButton.whileTrue(Arm.getInstance().rest());
-        operatorAButton.whileTrue(Arm.getInstance().cone());
-        operatorBButton.whileTrue(Arm.getInstance().cube());
-        operatorXButton.whileTrue(Arm.getInstance().floor());
+      operatorYButton.whileTrue(Arm.getInstance().rest());
+      operatorAButton.whileTrue(Arm.getInstance().cone());
+      // operatorBButton.whileTrue(Arm.getInstance().cube());
+      operatorXButton.whileTrue(Arm.getInstance().floor());
 
-      
-    }
+      operatorLeftBumper.whileTrue(hand.Opening().repeatedly());
+      operatorRightBumper.whileTrue(hand.Closing().repeatedly());
+    
+  }
  
 }

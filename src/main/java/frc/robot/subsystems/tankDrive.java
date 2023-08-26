@@ -37,6 +37,7 @@ public class tankDrive extends SubsystemBase {
   MotorControllerGroup leftMotors = new MotorControllerGroup(m_leftBackMotor, m_leftFrontMotor);
   MotorControllerGroup rightMotors = new MotorControllerGroup(m_rightBackMotor, m_rightFrontMotor);
   
+  
   DifferentialDrive m_Drive = new DifferentialDrive(leftMotors, rightMotors);
   
   
@@ -50,15 +51,4 @@ public class tankDrive extends SubsystemBase {
   public void tankDrive(double leftSpeed, double rightSpeed){
     m_Drive.tankDrive(leftSpeed, rightSpeed);
   }
-
-  // public void setLeftMotors(double leftSpeed){
-  //   leftMotors.set(leftSpeed);
-  // }
-
-  // public void setRightMotors(double rightSpeed){
-  //   rightMotors.set(rightSpeed);
-  // }
-
-
-
 }

@@ -26,11 +26,11 @@ public class Arm extends SubsystemBase {
     Position currentPosition = Position.REST;
 
     enum Position {
-        FLOOR(0, 28.6),
+        FLOOR(0, -66),
         CUBE(-87, 69),
-        CONE(-100, 65),
-        DUNK(-103, 70),
-        REST(0,0);
+        CONE(-88, -82),
+        DUNK(-90, 70),
+        REST(0, 0);
 
         public double arm;
         public double elbow;
@@ -77,24 +77,24 @@ public class Arm extends SubsystemBase {
         this.armPID = armMotor.getPIDController();
         this.elbowPID = elbowMotor.getPIDController();
 
-        // elbowPID.setOutputRange(-1,1);
-        // armPID.setOutputRange(-1,1);
+        elbowPID.setOutputRange(-1,1);
+        armPID.setOutputRange(-1,1);
 
         elbowPID.setP(1);
         elbowPID.setI(0);
         elbowPID.setD(0);
-        elbowPID.setFF(.1);
+        // elbowPID.setFF(0.1);
 
         armPID.setP(1);
         armPID.setI(0);
         armPID.setD(0);
-        armPID.setFF(0.1);
+        //armPID.setFF(0.1);
 
         elbowPID.setOutputRange(-0.5,0.25);
         armPID.setOutputRange(-1,1);
 
-        elbowMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        armMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        elbowMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        armMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
     }
 

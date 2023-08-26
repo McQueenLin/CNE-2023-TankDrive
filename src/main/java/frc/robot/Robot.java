@@ -10,6 +10,24 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.tankDrive;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.teleopDrive;
+import frc.robot.subsystems.tankDrive;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.subsystems.tankDrive;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.subsystems.*;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -18,6 +36,10 @@ import frc.robot.RobotContainer;
  * project.
  */
 public class Robot extends TimedRobot {
+  // public static final CANSparkMax armMotor = RobotContainer.armMotor;
+  // public static final CANSparkMax elbowMotor = RobotContainer.elbowMotor;
+  // public XboxController controller = new XboxController(0);
+  // public static final CANSparkMax handMotor = new CANSparkMax(7, MotorType.kBrushless);
   private Command m_autonomousCommand;
 
   public RobotContainer robotContainer;
@@ -81,6 +103,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     CommandScheduler.getInstance().schedule(robotContainer.tDrive);
+    //handMotor.set(controller.getLeftY());
+
   }
 
   @Override
