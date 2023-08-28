@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import com.revrobotics.RelativeEncoder;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -29,32 +30,43 @@ import frc.robot.RobotContainer;
 public class tankDrive extends SubsystemBase {
 
 
-  private CANSparkMax m_leftFrontMotor = new CANSparkMax(Constants.tankDriveConstants.leftFrontDeviceID, MotorType.kBrushless);
-  private CANSparkMax m_leftBackMotor = new CANSparkMax(Constants.tankDriveConstants.leftBackDeviceID, MotorType.kBrushless);
-  private CANSparkMax m_rightFrontMotor = new CANSparkMax(Constants.tankDriveConstants.rightFrontDeviceID, MotorType.kBrushless);
-  private CANSparkMax m_rightBackMotor = new CANSparkMax(Constants.tankDriveConstants.rightBackDeviceID, MotorType.kBrushless);
-
+  public CANSparkMax m_leftFrontMotor = new CANSparkMax(Constants.tankDriveConstants.leftFrontDeviceID, MotorType.kBrushless);
+  public CANSparkMax m_leftBackMotor = new CANSparkMax(Constants.tankDriveConstants.leftBackDeviceID, MotorType.kBrushless);
+  public static CANSparkMax m_rightFrontMotor = new CANSparkMax(Constants.tankDriveConstants.rightFrontDeviceID, MotorType.kBrushless);
+  public CANSparkMax m_rightBackMotor = new CANSparkMax(Constants.tankDriveConstants.rightBackDeviceID, MotorType.kBrushless);
+  
+  
   MotorControllerGroup leftMotors = new MotorControllerGroup(m_leftBackMotor, m_leftFrontMotor);
   MotorControllerGroup rightMotors = new MotorControllerGroup(m_rightBackMotor, m_rightFrontMotor);
   
   
-  DifferentialDrive m_Drive = new DifferentialDrive(leftMotors, rightMotors);
-  
+  //m_Drive = new DifferentialDrive(leftMotors, rightMotors);
+  public boolean centerPassed = false;
+  private double starterSpeed = 0.035;
+  private double degree = 4;
+  private double prevVal;
+  private boolean addSpeed = false;
+  private double speedLimit = 0.06;
   
 
   /** Creates a new ExampleSubsystem. */
   public tankDrive() {
-    rightMotors.setInverted(true);
+    m_rightBackMotor.setInverted(true);
+    m_rightFrontMotor.setInverted(true);
     leftMotors.setInverted(false);
   }
 
   public void tankDrive(double leftSpeed, double rightSpeed){
-    m_Drive.tankDrive(leftSpeed, rightSpeed);
+    //m_Drive.tankDrive(leftSpeed, rightSpeed);
+    m_rightFrontMotor.set(rightSpeed);
+    m_leftFrontMotor.set(leftSpeed);
+    m_leftBackMotor.set(leftSpeed);
+    m_rightBackMotor.set(rightSpeed);
+    //leftMotors.set(leftSpeed);
   }
 
   public void straight(double speed) {
-    m_Drive.tankDrive(speed, speed);
-
+      tankDrive(speed, speed);
   }
 
   public void brake(boolean activate) {
@@ -69,18 +81,62 @@ public class tankDrive extends SubsystemBase {
       m_rightBackMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
       m_leftBackMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     }
+    
   }
 
   public void pivot(double speed, boolean left) {
-    if (left) { //left
-      m_Drive.tankDrive(-speed, speed);
-    } else { //right
-      m_Drive.tankDrive(speed, -speed);
-    }
+      if (left) { //left
+        tankDrive(-speed, speed);
+      } else { //right
+        tankDrive(speed, -speed);
+      }
   }
 
   public void stop() {
-    m_Drive.tankDrive(0, 0);
-    System.out.println("DPAD UP");
+      tankDrive(0, 0);
+      System.out.println("DPAD UP");
+  }
+
+  public void balance(double pitch) {
+    brake(true);
+    if (centerPassed) {
+      speedLimit = 0.05;
+    } else {
+      speedLimit = 0.06;
+    }
+    
+    //frontRight.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    // For future note, intially start with high power to overcome
+    // static friction, then lower power to move at constant slow velocity
+
+    //Currently, steadily increase speed until it start moves
+    
+    if(pitch > degree) {
+      straight(starterSpeed); 
+      if (starterSpeed < speedLimit) { // if wheels have not moved, increase speed
+        starterSpeed += 0.0002;
+        addSpeed = true;
+        
+      } else {
+        addSpeed = false;
+      }
+      
+      SmartDashboard.putBoolean("Moving!", true);
+    } else if (pitch < -degree) {
+      straight(-starterSpeed);
+      if (starterSpeed < speedLimit) { // if wheels have not moved, increase speed
+        starterSpeed += 0.0002;
+        addSpeed = true;
+      } else {
+        addSpeed = false;
+      }
+      SmartDashboard.putBoolean("Moving!", true);
+    } else {
+      starterSpeed = 0.035;
+      brake(true);
+      SmartDashboard.putBoolean("Moving!", false);
+      addSpeed = false;
+      centerPassed = true;
+    }
   }
 }

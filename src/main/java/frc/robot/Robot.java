@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.*;
+import com.revrobotics.RelativeEncoder;
 
 
 /**
@@ -36,6 +37,7 @@ import frc.robot.subsystems.*;
  * project.
  */
 public class Robot extends TimedRobot {
+  
   // public static final CANSparkMax armMotor = RobotContainer.armMotor;
   // public static final CANSparkMax elbowMotor = RobotContainer.elbowMotor;
   // public XboxController controller = new XboxController(0);
@@ -43,7 +45,11 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   public RobotContainer robotContainer;
-
+  public double pitch;
+  public RelativeEncoder frEncoder = tankDrive.m_rightFrontMotor.getEncoder();
+  private double autoChargeInches = 68; //Community 54", ramp 14", cStation top 76"
+  private double inPerEncoder = 2.289; // 19 inches per 8.3 encoder value, one wheel rotation
+  private double distance = 0;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -53,6 +59,8 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
+    robotContainer.navX.resetGyro();
+    
   }
 
   /**
@@ -68,6 +76,7 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
+    
     CommandScheduler.getInstance().run();
   }
 
@@ -81,12 +90,20 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-
+    frEncoder.setPosition(0);
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    distance = frEncoder.getPosition() * inPerEncoder; //in inches
+    if (Math.abs(distance) < autoChargeInches) {
+      robotContainer.tank_Drive.straight(-0.1);
+      
+    } else {
+      robotContainer.tank_Drive.balance(pitch);
+    }
+  }
 
   @Override
   public void teleopInit() {

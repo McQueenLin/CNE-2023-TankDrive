@@ -4,17 +4,31 @@
 
 package frc.robot.commands;
 
+import frc.robot.subsystems.NavXGyro;
 import frc.robot.subsystems.tankDrive;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
+//import frc.robot.NavxGyro;
+import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.RelativeEncoder;
+
+
 
 
 /** An example command that uses an example subsystem. */
 public class teleopDrive extends CommandBase {
   private final tankDrive m_Drive;
   public XboxController m_Controller;
+  public RelativeEncoder frEncoder = tankDrive.m_rightFrontMotor.getEncoder();
+  double pitch = RobotContainer.navX.getNavPitch();
+  private double adjSpeed = 0.05;
+  
+  
+
+  //public RobotContainer robotContainer;
 
   /**
    * Creates a new ExampleCommand.
@@ -28,14 +42,40 @@ public class teleopDrive extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    //robotContainer = new RobotContainer();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    //System.out.println(m_Controller.getPOV());
     // tank_Drive.setLeftMotors(m_leftSpeed);
     // tank_Drive.setRightMotors(m_rightSpeed);
-    m_Drive.tankDrive(m_Controller.getLeftY() * 0.3, m_Controller.getRightY() * 0.3);
+    if (m_Controller.getPOV() == 0) {
+      m_Drive.straight(adjSpeed);
+      
+    } else if (m_Controller.getPOV() == 180) {
+      m_Drive.straight(-adjSpeed);
+    } else if (m_Controller.getPOV() == 90) {
+      m_Drive.pivot(adjSpeed, false);
+    } else if (m_Controller.getPOV() == 270) {
+      m_Drive.pivot(adjSpeed, true);
+    } else if (m_Controller.getYButton()) {
+      this.frEncoder.setPosition(0);
+    } else if (m_Controller.getAButton()) {
+      //starterSpeed = 0.01;
+      m_Drive.balance(this.pitch);
+    } else if (m_Controller.getXButton()) {
+      m_Drive.brake(true);
+    }else if(Math.abs(m_Controller.getLeftY()) > 0.1 || Math.abs(m_Controller.getRightY()) > 0.1) {
+      m_Drive.tankDrive(-m_Controller.getLeftY() * 0.3, -m_Controller.getRightY() * 0.3);
+    } else {
+      m_Drive.brake(false);
+      m_Drive.centerPassed = false;
+      m_Drive.straight(0);
+    }
+    
     
     
     SmartDashboard.putNumber("leftSpeed", m_Controller.getLeftY());
@@ -51,4 +91,6 @@ public class teleopDrive extends CommandBase {
   public boolean isFinished() {
     return false;
   }
+
+ 
 }
