@@ -18,14 +18,14 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
-    public static final int handMotor = 9;
+    public static final int handMotor = 23;
   }
 
   public static class tankDriveConstants {
-    public static final int leftFrontDeviceID = 4;
-    public static final int leftBackDeviceID = 3;
-    public static final int rightFrontDeviceID = 1;
-    public static final int rightBackDeviceID = 2;
+    public static final int leftFrontDeviceID = 20;
+    public static final int leftBackDeviceID = 27;
+    public static final int rightFrontDeviceID = 21;
+    public static final int rightBackDeviceID = 22;
   }
 
 }

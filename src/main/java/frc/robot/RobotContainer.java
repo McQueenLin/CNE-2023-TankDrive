@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.Hand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -30,13 +31,14 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final static XboxController m_driverController = new XboxController(OperatorConstants.kDriverControllerPort);
+  private final static XboxController driverController = new XboxController(OperatorConstants.kDriverControllerPort);
   public static final XboxController operatorController = new XboxController(OperatorConstants.kOperatorControllerPort);
   
-  public static final CANSparkMax armMotor = new CANSparkMax(40,CANSparkMaxLowLevel.MotorType.kBrushless);
+  public static final CANSparkMax armMotor = new CANSparkMax(24,CANSparkMaxLowLevel.MotorType.kBrushless);
   public static final CANSparkMax elbowMotor = new CANSparkMax(41,CANSparkMaxLowLevel.MotorType.kBrushless);
   public static final DigitalInput input = new DigitalInput(0);
   public static final DigitalInput photoSwitch = new DigitalInput(1);
+  public static final CANSparkMax handMotor = new CANSparkMax(23, CANSparkMaxLowLevel.MotorType.kBrushless);
 
   JoystickButton operatorLeftBumper = new JoystickButton(operatorController, Button.kLeftBumper.value);
   JoystickButton operatorRightModifier = new JoystickButton(operatorController, Button.kStart.value);
@@ -46,11 +48,10 @@ public class RobotContainer {
    JoystickButton operatorAButton = new JoystickButton(operatorController, Button.kA.value);
 //   JoystickButton operatorBButton = new JoystickButton(operatorController, Button.kB.value);
   JoystickButton operatorXButton = new JoystickButton(operatorController, Button.kX.value);
- 
+  
   public tankDrive tank_Drive = new tankDrive();
-  public Hand hand = new Hand();
 
-  public teleopDrive tDrive = new teleopDrive(tank_Drive, m_driverController);
+  public teleopDrive tDrive = new teleopDrive(tank_Drive, driverController);
   
   public RobotContainer()
     {
@@ -63,15 +64,20 @@ public class RobotContainer {
 
       System.out.println("Bind");
 
-      Arm.getInstance().setDefaultCommand(Arm.getInstance().changePos());
-
+      //Arm.getInstance().setDefaultCommand(Arm.getInstance().changePos());
+      // Hand.getInstance().setDefaultCommand(Hand.getInstance().Opening());
+    
       operatorYButton.whileTrue(Arm.getInstance().rest());
       operatorAButton.whileTrue(Arm.getInstance().cone());
       // operatorBButton.whileTrue(Arm.getInstance().cube());
       operatorXButton.whileTrue(Arm.getInstance().floor());
 
-      operatorLeftBumper.whileTrue(hand.Opening().repeatedly());
-      operatorRightBumper.whileTrue(hand.Closing().repeatedly());
+      operatorLeftBumper.whileTrue(Hand.getInstance().Opening().repeatedly());
+      
+      operatorRightBumper.whileTrue(Hand.getInstance().Closing().repeatedly());
+      operatorRightBumper.whileFalse(Hand.getInstance().Holding().repeatedly());
+    
+      
     
   }
  
