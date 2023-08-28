@@ -45,10 +45,42 @@ public class tankDrive extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
   public tankDrive() {
     rightMotors.setInverted(true);
-    leftMotors.setInverted(true);
+    leftMotors.setInverted(false);
   }
 
   public void tankDrive(double leftSpeed, double rightSpeed){
     m_Drive.tankDrive(leftSpeed, rightSpeed);
+  }
+
+  public void straight(double speed) {
+    m_Drive.tankDrive(speed, speed);
+
+  }
+
+  public void brake(boolean activate) {
+    if (activate) {
+      m_rightFrontMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+      m_leftFrontMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+      m_rightBackMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+      m_leftBackMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    } else {
+      m_rightFrontMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+      m_leftFrontMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+      m_rightBackMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+      m_leftBackMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    }
+  }
+
+  public void pivot(double speed, boolean left) {
+    if (left) { //left
+      m_Drive.tankDrive(-speed, speed);
+    } else { //right
+      m_Drive.tankDrive(speed, -speed);
+    }
+  }
+
+  public void stop() {
+    m_Drive.tankDrive(0, 0);
+    System.out.println("DPAD UP");
   }
 }

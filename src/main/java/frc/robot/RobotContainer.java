@@ -18,6 +18,7 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.subsystems.*;
 
 /**
@@ -46,6 +47,10 @@ public class RobotContainer {
    JoystickButton operatorAButton = new JoystickButton(operatorController, Button.kA.value);
 //   JoystickButton operatorBButton = new JoystickButton(operatorController, Button.kB.value);
   JoystickButton operatorXButton = new JoystickButton(operatorController, Button.kX.value);
+  POVButton driverDpadUp = new POVButton(m_driverController, 0);
+  POVButton driverDpadRight = new POVButton(m_driverController, 90);
+  POVButton driverDpadDown = new POVButton(m_driverController, 180);
+  POVButton driverDpadLeft = new POVButton(m_driverController, 270);
  
   public tankDrive tank_Drive = new tankDrive();
   public Hand hand = new Hand();
@@ -64,7 +69,7 @@ public class RobotContainer {
       System.out.println("Bind");
 
       Arm.getInstance().setDefaultCommand(Arm.getInstance().changePos());
-
+      
       operatorYButton.whileTrue(Arm.getInstance().rest());
       operatorAButton.whileTrue(Arm.getInstance().cone());
       // operatorBButton.whileTrue(Arm.getInstance().cube());
@@ -72,6 +77,8 @@ public class RobotContainer {
 
       operatorLeftBumper.whileTrue(hand.Opening().repeatedly());
       operatorRightBumper.whileTrue(hand.Closing().repeatedly());
+
+      //driverDpadUp.whileTrue(tankDrive.stop().repeatedly());
     
   }
  
