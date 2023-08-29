@@ -14,7 +14,7 @@ public class Arm extends SubsystemBase {
 
     public static final CANSparkMax armMotor = RobotContainer.armMotor;
     public static final CANSparkMax elbowMotor = RobotContainer.elbowMotor;
-    public static final DigitalInput input = RobotContainer.input;
+    //public static final DigitalInput input = RobotContainer.input;
     public static final DigitalInput photoSwitch = RobotContainer.photoSwitch;
     private final SparkMaxPIDController armPID;
     private final SparkMaxPIDController elbowPID;
@@ -146,8 +146,8 @@ public class Arm extends SubsystemBase {
     }
 
     public Command changePos(){
-        currentPositionHoldArm = currentPosition.arm;
-        currentPositionHoldElbow = currentPosition.elbow;
+        //currentPositionHoldArm = currentPosition.arm;
+        //currentPositionHoldElbow = currentPosition.elbow;
 
         return runOnce(() ->{
             // armMotor.set(operatorController.getRightY()*0.3);
@@ -155,7 +155,7 @@ public class Arm extends SubsystemBase {
             double elbow = operatorController.getRightY();
             double arm = operatorController.getLeftY();
 
-            System.out.println(Math.abs(arm));
+            //System.out.println(Math.abs(arm));
 
             if(Math.abs(elbow) > 0.05){
                 PID = false;
@@ -171,14 +171,16 @@ public class Arm extends SubsystemBase {
 
             if(Math.abs(arm) > 0.05){
                 SmartDashboard.putNumber("arm", arm);
-                currentPositionHoldArm = currentPositionHoldArm + arm;
+                //currentPositionHoldArm = currentPositionHoldArm + arm;
+                currentPosition.arm = currentPosition.arm + arm;
             }
 
             if(Math.abs(elbow) > 0.05){
                 SmartDashboard.putNumber("elbow", elbow);
-                currentPositionHoldElbow =  currentPositionHoldElbow - elbow;
+                //currentPositionHoldElbow =  currentPositionHoldElbow - elbow;
+                currentPosition.elbow = currentPosition.elbow - elbow;
             }
-        }).andThen(holdArm());
+        }).andThen(moveArm()); //}).andThen(moveArm())
 
 
     }
@@ -190,7 +192,7 @@ public class Arm extends SubsystemBase {
         });
     }
 
-    
+    /*
     public Command holdArm() { //Auto positioning
         return runOnce(() -> {
             if(PID == true){
@@ -217,7 +219,7 @@ public class Arm extends SubsystemBase {
         });
     }
 
-
+*/
     @Override
     public void periodic() {
 

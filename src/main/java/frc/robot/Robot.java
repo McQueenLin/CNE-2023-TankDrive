@@ -19,12 +19,16 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.subsystems.tankDrive;
+
+import java.nio.file.attribute.AclFileAttributeView;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.*;
 import com.revrobotics.RelativeEncoder;
@@ -51,6 +55,12 @@ public class Robot extends TimedRobot {
   private double inPerEncoder = 2.289; // 19 inches per 8.3 encoder value, one wheel rotation
   private double distance = 0;
   
+  public static int first = 0;
+  public static int OpenCounter=0;
+  public static boolean detect = false;
+  public static boolean activated = false;
+
+  public CANSparkMax HandMotor = RobotContainer.handMotor;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -109,6 +119,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -116,12 +127,52 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    if(!activated)  detect = !robotContainer.photoSwitch.get();
+    SmartDashboard.putBoolean("Detect", detect);
+    SmartDashboard.putNumber("First", first);
+    SmartDashboard.putBoolean("Close", activated);
+    
     CommandScheduler.getInstance().schedule(robotContainer.tDrive);
+    SmartDashboard.putBoolean("Robot.Detect", Robot.detect);
+    if (detect && !activated)// && !driverController.getLeftBumper()) 
+    {
+      first ++;
+      
+      if (first < 5) 
+      {
+        
+        HandMotor.set(0.3);
+      } 
+      else 
+      {
+        HandMotor.set(0.1);
+        if(first > 200)
+        {
+          OpenCounter=0;
+          first = 0;
+          detect = false;
+          activated = true;
+        }
+      }
+      
+    }
+    else
+    {
+      OpenCounter ++;
+      HandMotor.set(-0.05);
+      if(OpenCounter > 500) 
+      {
+        activated = false;
+        OpenCounter = 0;
+      }
+    }
+    
     //handMotor.set(controller.getLeftY());
 
   }

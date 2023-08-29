@@ -19,6 +19,7 @@ import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.subsystems.*;
@@ -34,14 +35,15 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final static XboxController driverController = new XboxController(OperatorConstants.kDriverControllerPort);
+  public final static XboxController driverController = new XboxController(OperatorConstants.kDriverControllerPort);
   public static final XboxController operatorController = new XboxController(OperatorConstants.kOperatorControllerPort);
   
   public static final CANSparkMax armMotor = new CANSparkMax(24,CANSparkMaxLowLevel.MotorType.kBrushless);
   public static final CANSparkMax elbowMotor = new CANSparkMax(41,CANSparkMaxLowLevel.MotorType.kBrushless);
-  public static final DigitalInput input = new DigitalInput(0);
-  public static final DigitalInput photoSwitch = new DigitalInput(1);
+  //public static final DigitalInput input = new DigitalInput(0);
+  public static final DigitalInput photoSwitch = new DigitalInput(0);
   public static final CANSparkMax handMotor = new CANSparkMax(23, CANSparkMaxLowLevel.MotorType.kBrushless);
+  
 
   public static final NavXGyro navX = NavXGyro.getInstance();
  
@@ -87,8 +89,6 @@ public class RobotContainer {
       
       operatorRightBumper.whileTrue(Hand.getInstance().Closing().repeatedly());
       operatorRightBumper.whileFalse(Hand.getInstance().Holding().repeatedly());
-    
-      
     
   }
  
