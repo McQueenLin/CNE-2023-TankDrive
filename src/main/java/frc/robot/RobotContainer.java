@@ -53,8 +53,7 @@ public class RobotContainer {
 
   public teleopDrive tDrive = new teleopDrive(tank_Drive, driverController);
   
-  public RobotContainer()
-    {
+  public RobotContainer(){
         // Configure the trigger bindings
         configureBindings();
     }
@@ -64,13 +63,13 @@ public class RobotContainer {
 
       System.out.println("Bind");
 
-      //Arm.getInstance().setDefaultCommand(Arm.getInstance().changePos());
+      Arm.getInstance().setDefaultCommand(Arm.getInstance().changePos());
       // Hand.getInstance().setDefaultCommand(Hand.getInstance().Opening());
     
-      operatorYButton.whileTrue(Arm.getInstance().rest());
-      operatorAButton.whileTrue(Arm.getInstance().cone());
-      // operatorBButton.whileTrue(Arm.getInstance().cube());
-      operatorXButton.whileTrue(Arm.getInstance().floor());
+      // operatorYButton.whileTrue(Arm.getInstance().rest());
+      // operatorAButton.whileTrue(Arm.getInstance().cone());
+      // // operatorBButton.whileTrue(Arm.getInstance().cube());
+      // operatorXButton.whileTrue(Arm.getInstance().floor());
 
       operatorLeftBumper.whileTrue(Hand.getInstance().Opening().repeatedly());
       

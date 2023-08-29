@@ -38,7 +38,7 @@ public class Hand extends SubsystemBase{
     public RelativeEncoder HandMotorEncoder = HandMotor.getEncoder();
     public double handPosition;
 
-    public static double openHandPosition = 0;
+    public static double openHandPosition = 0.1;
     public static double HandPositionForClose = 2;
     public static double holdSpeed = 0.1;
     double currentPosition;
@@ -47,7 +47,7 @@ public class Hand extends SubsystemBase{
     // private static boolean hasHandSwitchDevice = false;
     //Timer timer = new Timer();
   
-    public static final double motorSpeed = 0.15;
+    public static final double motorSpeed = 0.1;
     public static final double lastPosition = 0;
     public static boolean hold = false;
     // public static final double CUBE_CLOSING_FORCE = 0.8;
@@ -83,16 +83,15 @@ public class Hand extends SubsystemBase{
         return runOnce(() -> {
             while(true){
                 currentPosition = HandMotorEncoder.getPosition();
-                if (openHandPosition < currentPosition) {
-                    HandMotor.set(motorSpeed*-1);
-                    holdSpeed = -0.15;
+                if (currentPosition > openHandPosition) {
+                    HandMotor.set(-motorSpeed);
+                    holdSpeed = -0.1;
                     hold = false;
                 } 
                 else {
                     HandMotor.set(0);
                     holdSpeed = 0;
                     break;
-                    
                  }
             }     
         });
@@ -112,7 +111,7 @@ public class Hand extends SubsystemBase{
     public Command Holding(){
         return runOnce(() -> {
             if(hold == true){
-                holdSpeed = 0.1;
+                holdSpeed = 0.05;
                 HandMotor.set(holdSpeed);
             } else{
                 holdSpeed = 0;

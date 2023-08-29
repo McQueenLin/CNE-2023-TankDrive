@@ -18,6 +18,8 @@ public class Arm extends SubsystemBase {
     public static final DigitalInput photoSwitch = RobotContainer.photoSwitch;
     private final SparkMaxPIDController armPID;
     private final SparkMaxPIDController elbowPID;
+    private final SparkMaxPIDController armPIDHold;
+    private final SparkMaxPIDController ElbowPIDHold;
 
 
     private RelativeEncoder elbowEncoder;
@@ -25,8 +27,13 @@ public class Arm extends SubsystemBase {
 
     Position currentPosition = Position.REST;
 
+    boolean PID = true;
+
+    double currentPositionHoldArm;
+    double currentPositionHoldElbow;
+
     enum Position {
-        FLOOR(0, -66),
+        FLOOR(0, -90),
         CUBE(-87, 69),
         CONE(-88, -82),
         DUNK(-90, 70),
@@ -76,6 +83,8 @@ public class Arm extends SubsystemBase {
 
         this.armPID = armMotor.getPIDController();
         this.elbowPID = elbowMotor.getPIDController();
+        this.armPIDHold = armMotor.getPIDController();
+        this.ElbowPIDHold = elbowMotor.getPIDController();
 
         elbowPID.setOutputRange(-1,1);
         armPID.setOutputRange(-1,1);
@@ -83,18 +92,18 @@ public class Arm extends SubsystemBase {
         elbowPID.setP(1);
         elbowPID.setI(0);
         elbowPID.setD(0);
-        // elbowPID.setFF(0.1);
+        elbowPID.setFF(0.1);
 
         armPID.setP(1);
         armPID.setI(0);
         armPID.setD(0);
-        //armPID.setFF(0.1);
+        armPID.setFF(0.1);
 
         elbowPID.setOutputRange(-0.5,0.25);
         armPID.setOutputRange(-1,1);
 
-        elbowMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-        armMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        elbowMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        armMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
     }
 
@@ -139,35 +148,63 @@ public class Arm extends SubsystemBase {
     public Command changePos(){
 
         return runOnce(() ->{
-
+            // armMotor.set(operatorController.getRightY()*0.3);
+            // elbowMotor.set(operatorController.getLeftY()*0.3);
             double elbow = operatorController.getRightY();
             double arm = operatorController.getLeftY();
 
             System.out.println(Math.abs(arm));
 
-            if(Math.abs(arm) > 0.05){
-                System.out.println(arm);
+            if(Math.abs(elbow) > 0.05){
+                PID = false;
+            }else{
+                PID = true;
+            }
 
-                currentPosition.arm = currentPosition.arm + 1 * arm;
+            if(Math.abs(arm) > 0.05){
+                PID = false;
+            }else{
+                PID = true;
+            }
+
+            if(Math.abs(arm) > 0.05){
+                SmartDashboard.putNumber("arm", arm);
+                currentPositionHoldArm = currentPosition.arm + arm;
             }
 
             if(Math.abs(elbow) > 0.05){
-
-                System.out.println(elbow);
-                currentPosition.elbow =  currentPosition.elbow - 1 * elbow;
+                SmartDashboard.putNumber("elbow", elbow);
+                currentPositionHoldElbow =  currentPosition.elbow - elbow;
             }
-
         }).andThen(moveArm());
+
 
     }
 
     public Command moveArm() { //Auto positioning
         return runOnce(() -> {
+            if(PID == true){
+                elbowPID.setP(1);
+                elbowPID.setI(0);
+                elbowPID.setD(0);
+                elbowPID.setFF(0.1);
 
-            armPID.setReference(currentPosition.arm, CANSparkMax.ControlType.kPosition);
-            elbowPID.setReference(currentPosition.elbow, CANSparkMax.ControlType.kPosition);
+                armPID.setP(1);
+                armPID.setI(0);
+                armPID.setD(0);
+                armPID.setFF(0.1);
+                armPID.setReference(currentPosition.arm, CANSparkMax.ControlType.kPosition);
+                elbowPID.setReference(currentPosition.elbow, CANSparkMax.ControlType.kPosition);
+            }else if (PID == false){
+                elbowPID.setP(0.1);
+                elbowPID.setFF(0);
+
+                armPID.setP(0.1);
+                armPID.setFF(0);
+                armPID.setReference(currentPosition.arm, CANSparkMax.ControlType.kPosition);
+                elbowPID.setReference(currentPosition.elbow, CANSparkMax.ControlType.kPosition);
+            }
         });
-
     }
 
     @Override
