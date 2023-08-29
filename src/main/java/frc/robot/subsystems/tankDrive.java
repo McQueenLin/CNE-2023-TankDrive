@@ -57,6 +57,9 @@ public class tankDrive extends SubsystemBase {
   }
 
   public void tankDrive(double leftSpeed, double rightSpeed){
+    SmartDashboard.putNumber("Speed", starterSpeed);
+    SmartDashboard.putBoolean("Add speed", addSpeed);
+    SmartDashboard.putBoolean("Passed Center", centerPassed);
     //m_Drive.tankDrive(leftSpeed, rightSpeed);
     m_rightFrontMotor.set(rightSpeed);
     m_leftFrontMotor.set(leftSpeed);
@@ -134,6 +137,7 @@ public class tankDrive extends SubsystemBase {
     } else {
       starterSpeed = 0.035;
       brake(true);
+      stop();
       SmartDashboard.putBoolean("Moving!", false);
       addSpeed = false;
       centerPassed = true;

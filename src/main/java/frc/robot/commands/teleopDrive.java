@@ -23,7 +23,7 @@ public class teleopDrive extends CommandBase {
   private final tankDrive m_Drive;
   public XboxController m_Controller;
   public RelativeEncoder frEncoder = tankDrive.m_rightFrontMotor.getEncoder();
-  double pitch = RobotContainer.navX.getNavPitch();
+  
   private double adjSpeed = 0.05;
   
   
@@ -49,6 +49,10 @@ public class teleopDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    SmartDashboard.putNumber("pitch", Robot.pitch);
+    SmartDashboard.putNumber("Encoder", frEncoder.getPosition());
+    
     //System.out.println(m_Controller.getPOV());
     // tank_Drive.setLeftMotors(m_leftSpeed);
     // tank_Drive.setRightMotors(m_rightSpeed);
@@ -65,7 +69,7 @@ public class teleopDrive extends CommandBase {
       this.frEncoder.setPosition(0);
     } else if (m_Controller.getAButton()) {
       //starterSpeed = 0.01;
-      m_Drive.balance(this.pitch);
+      m_Drive.balance(Robot.pitch);
     } else if (m_Controller.getXButton()) {
       m_Drive.brake(true);
     }else if(Math.abs(m_Controller.getLeftY()) > 0.1 || Math.abs(m_Controller.getRightY()) > 0.1) {

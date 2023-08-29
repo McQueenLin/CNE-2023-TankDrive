@@ -45,11 +45,12 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   public RobotContainer robotContainer;
-  public double pitch;
+  public static double pitch;
   public RelativeEncoder frEncoder = tankDrive.m_rightFrontMotor.getEncoder();
   private double autoChargeInches = 68; //Community 54", ramp 14", cStation top 76"
   private double inPerEncoder = 2.289; // 19 inches per 8.3 encoder value, one wheel rotation
   private double distance = 0;
+  
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -72,6 +73,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    pitch = robotContainer.navX.getNavPitch();
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
