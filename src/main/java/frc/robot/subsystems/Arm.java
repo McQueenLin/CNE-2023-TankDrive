@@ -146,6 +146,8 @@ public class Arm extends SubsystemBase {
     }
 
     public Command changePos(){
+        currentPositionHoldArm = currentPosition.arm;
+        currentPositionHoldElbow = currentPosition.elbow;
 
         return runOnce(() ->{
             // armMotor.set(operatorController.getRightY()*0.3);
@@ -169,19 +171,27 @@ public class Arm extends SubsystemBase {
 
             if(Math.abs(arm) > 0.05){
                 SmartDashboard.putNumber("arm", arm);
-                currentPositionHoldArm = currentPosition.arm + arm;
+                currentPositionHoldArm = currentPositionHoldArm + arm;
             }
 
             if(Math.abs(elbow) > 0.05){
                 SmartDashboard.putNumber("elbow", elbow);
-                currentPositionHoldElbow =  currentPosition.elbow - elbow;
+                currentPositionHoldElbow =  currentPositionHoldElbow - elbow;
             }
-        }).andThen(moveArm());
+        }).andThen(holdArm());
 
 
     }
 
     public Command moveArm() { //Auto positioning
+        return runOnce(() -> {
+                armPID.setReference(currentPosition.arm, CANSparkMax.ControlType.kPosition);
+                elbowPID.setReference(currentPosition.elbow, CANSparkMax.ControlType.kPosition);
+        });
+    }
+
+    
+    public Command holdArm() { //Auto positioning
         return runOnce(() -> {
             if(PID == true){
                 elbowPID.setP(1);
@@ -193,24 +203,26 @@ public class Arm extends SubsystemBase {
                 armPID.setI(0);
                 armPID.setD(0);
                 armPID.setFF(0.1);
-                armPID.setReference(currentPosition.arm, CANSparkMax.ControlType.kPosition);
-                elbowPID.setReference(currentPosition.elbow, CANSparkMax.ControlType.kPosition);
+                armPID.setReference(currentPositionHoldArm, CANSparkMax.ControlType.kPosition);
+                elbowPID.setReference(currentPositionHoldElbow, CANSparkMax.ControlType.kPosition);
             }else if (PID == false){
-                elbowPID.setP(0.1);
+                elbowPID.setP(0);
                 elbowPID.setFF(0);
 
-                armPID.setP(0.1);
+                armPID.setP(0);
                 armPID.setFF(0);
-                armPID.setReference(currentPosition.arm, CANSparkMax.ControlType.kPosition);
-                elbowPID.setReference(currentPosition.elbow, CANSparkMax.ControlType.kPosition);
+                armPID.setReference(currentPositionHoldArm, CANSparkMax.ControlType.kPosition);
+                elbowPID.setReference(currentPositionHoldElbow, CANSparkMax.ControlType.kPosition);
             }
         });
     }
+
 
     @Override
     public void periodic() {
 
         SmartDashboard.putNumber("arm", armEncoder.getPosition());
+        SmartDashboard.putNumber("P integral", elbowPID.getP());
         SmartDashboard.putNumber("Elbow", elbowEncoder.getPosition());
 
 
