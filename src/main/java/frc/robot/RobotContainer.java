@@ -62,7 +62,7 @@ public class RobotContainer {
   // POVButton driverDpadLeft = new POVButton(m_driverController, 270);
  
   public tankDrive tank_Drive = new tankDrive();
-  public Hand hand = new Hand();
+  //public Hand hand = new Hand();
   // public RelativeEncoder frEncoder = tank_Drive.m_rightFrontMotor.getEncoder();
 
   public teleopDrive tDrive = new teleopDrive(tank_Drive, driverController);
