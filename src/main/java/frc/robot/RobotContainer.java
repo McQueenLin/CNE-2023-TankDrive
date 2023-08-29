@@ -15,9 +15,12 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.subsystems.tankDrive;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.RelativeEncoder;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Hand;
 
@@ -40,6 +43,9 @@ public class RobotContainer {
   public static final DigitalInput photoSwitch = new DigitalInput(1);
   public static final CANSparkMax handMotor = new CANSparkMax(23, CANSparkMaxLowLevel.MotorType.kBrushless);
 
+  public static final NavXGyro navX = NavXGyro.getInstance();
+ 
+  
   JoystickButton operatorLeftBumper = new JoystickButton(operatorController, Button.kLeftBumper.value);
   JoystickButton operatorRightModifier = new JoystickButton(operatorController, Button.kStart.value);
   JoystickButton operatorLeftModifier = new JoystickButton(operatorController, Button.kBack.value);
@@ -48,8 +54,14 @@ public class RobotContainer {
    JoystickButton operatorAButton = new JoystickButton(operatorController, Button.kA.value);
 //   JoystickButton operatorBButton = new JoystickButton(operatorController, Button.kB.value);
   JoystickButton operatorXButton = new JoystickButton(operatorController, Button.kX.value);
-  
+  // POVButton driverDpadUp = new POVButton(m_driverController, 0);
+  // POVButton driverDpadRight = new POVButton(m_driverController, 90);
+  // POVButton driverDpadDown = new POVButton(m_driverController, 180);
+  // POVButton driverDpadLeft = new POVButton(m_driverController, 270);
+ 
   public tankDrive tank_Drive = new tankDrive();
+  public Hand hand = new Hand();
+  // public RelativeEncoder frEncoder = tank_Drive.m_rightFrontMotor.getEncoder();
 
   public teleopDrive tDrive = new teleopDrive(tank_Drive, driverController);
   
