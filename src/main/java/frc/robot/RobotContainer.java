@@ -53,8 +53,8 @@ public class RobotContainer {
   JoystickButton operatorLeftModifier = new JoystickButton(operatorController, Button.kBack.value);
   JoystickButton operatorRightBumper = new JoystickButton(operatorController, Button.kRightBumper.value);
   JoystickButton operatorYButton = new JoystickButton(operatorController, Button.kY.value);
-   JoystickButton operatorAButton = new JoystickButton(operatorController, Button.kA.value);
-//   JoystickButton operatorBButton = new JoystickButton(operatorController, Button.kB.value);
+  JoystickButton operatorAButton = new JoystickButton(operatorController, Button.kA.value);
+  JoystickButton operatorBButton = new JoystickButton(operatorController, Button.kB.value);
   JoystickButton operatorXButton = new JoystickButton(operatorController, Button.kX.value);
   // POVButton driverDpadUp = new POVButton(m_driverController, 0);
   // POVButton driverDpadRight = new POVButton(m_driverController, 90);
@@ -78,12 +78,13 @@ public class RobotContainer {
       System.out.println("Bind");
 
       Arm.getInstance().setDefaultCommand(Arm.getInstance().changePos());
+      //Hand.getInstance().setDefaultCommand(Hand.getInstance().changePos());
       // Hand.getInstance().setDefaultCommand(Hand.getInstance().Opening());
     
-      // operatorYButton.whileTrue(Arm.getInstance().rest());
-      // operatorAButton.whileTrue(Arm.getInstance().cone());
-      // // operatorBButton.whileTrue(Arm.getInstance().cube());
-      // operatorXButton.whileTrue(Arm.getInstance().floor());
+      operatorXButton.whileTrue(Arm.getInstance().rest());
+      operatorBButton.whileTrue(Arm.getInstance().cone());
+      operatorYButton.whileTrue(Arm.getInstance().cube());
+      operatorAButton.whileTrue(Arm.getInstance().floor());
 
       operatorLeftBumper.whileTrue(Hand.getInstance().Opening().repeatedly());
       

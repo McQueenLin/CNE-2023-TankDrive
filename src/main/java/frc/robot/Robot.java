@@ -133,48 +133,39 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    CommandScheduler.getInstance().schedule(robotContainer.tDrive);
+
+    //Robin's Dad's Light Sensor testing because couldn't activate commands
+    /*
     if(!activated)  detect = !robotContainer.photoSwitch.get();
     SmartDashboard.putBoolean("Detect", detect);
     SmartDashboard.putNumber("First", first);
     SmartDashboard.putBoolean("Close", activated);
-    
-    CommandScheduler.getInstance().schedule(robotContainer.tDrive);
     SmartDashboard.putBoolean("Robot.Detect", Robot.detect);
-    if (detect && !activated)// && !driverController.getLeftBumper()) 
-    {
+    if (detect && !activated) { // && !driverController.getLeftBumper()) 
       first ++;
       
-      if (first < 5) 
-      {
-        
+      if (first < 5) {
         HandMotor.set(0.3);
-      } 
-      else 
-      {
+      } else {
         HandMotor.set(0.1);
-        if(first > 200)
-        {
+        if(first > 200) {
           OpenCounter=0;
           first = 0;
           detect = false;
           activated = true;
         }
       }
-      
-    }
-    else
-    {
+    } else {
       OpenCounter ++;
       HandMotor.set(-0.05);
-      if(OpenCounter > 500) 
-      {
+      if(OpenCounter > 500) {
         activated = false;
         OpenCounter = 0;
       }
     }
-    
     //handMotor.set(controller.getLeftY());
-
+    */
   }
 
   @Override

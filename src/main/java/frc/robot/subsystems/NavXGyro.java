@@ -29,7 +29,7 @@ public class NavXGyro extends SubsystemBase {
 
         zeroHeading = getNavHeading();
         zeroAngle = getNavAngle();
-        System.out.println("Setup ZeroAngle " + zeroAngle);
+        //System.out.println("Setup ZeroAngle " + zeroAngle);
 
     }
 
@@ -61,8 +61,8 @@ public class NavXGyro extends SubsystemBase {
         navX.reset();
         zeroHeading = getNavHeading();
         zeroAngle = getNavAngle();
-        System.out.println("ZeroHeading: " + zeroHeading);
-        System.out.println("ZeroAngle: " + zeroAngle);
+        //System.out.println("ZeroHeading: " + zeroHeading);
+        //System.out.println("ZeroAngle: " + zeroAngle);
     }
 
     public double getZeroHeading(){

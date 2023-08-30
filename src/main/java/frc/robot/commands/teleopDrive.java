@@ -6,7 +6,9 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.NavXGyro;
 import frc.robot.subsystems.tankDrive;
+import frc.robot.subsystems.Arm;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
@@ -23,6 +25,8 @@ public class teleopDrive extends CommandBase {
   private final tankDrive m_Drive;
   public XboxController m_Controller;
   public RelativeEncoder frEncoder = tankDrive.m_rightFrontMotor.getEncoder();
+  private double speedReductionConstant = 0.4;
+  private double timer = 0;
   
   private double adjSpeed = 0.05;
   
@@ -50,30 +54,43 @@ public class teleopDrive extends CommandBase {
   @Override
   public void execute() {
 
-    SmartDashboard.putNumber("pitch", Robot.pitch);
-    SmartDashboard.putNumber("Encoder", frEncoder.getPosition());
+    SmartDashboard.putNumber("Robot Pitch", Robot.pitch);
+    SmartDashboard.putNumber("Distance Encoder", frEncoder.getPosition());
+    SmartDashboard.putNumber("Speed, out of 1", speedReductionConstant);
     
     //System.out.println(m_Controller.getPOV());
     // tank_Drive.setLeftMotors(m_leftSpeed);
     // tank_Drive.setRightMotors(m_rightSpeed);
+    if (timer <= 10) {
+      timer++;
+    }
+     
+    //if(Arm.resting) {
+      if (m_Controller.getYButton() && timer >= 10) {
+        speedReductionConstant = (speedReductionConstant == 0.7 ? 0.4:0.7);
+        timer = 0;
+        //this.frEncoder.setPosition(0);        
+      }
+    //} else {
+      //speedReductionConstant = 0.2;
+    //}
+
     if (m_Controller.getPOV() == 0) {
       m_Drive.straight(adjSpeed);
-      
     } else if (m_Controller.getPOV() == 180) {
       m_Drive.straight(-adjSpeed);
     } else if (m_Controller.getPOV() == 90) {
       m_Drive.pivot(adjSpeed, false);
     } else if (m_Controller.getPOV() == 270) {
       m_Drive.pivot(adjSpeed, true);
-    } else if (m_Controller.getYButton()) {
-      this.frEncoder.setPosition(0);
     } else if (m_Controller.getAButton()) {
       //starterSpeed = 0.01;
       m_Drive.balance(Robot.pitch);
     } else if (m_Controller.getXButton()) {
       m_Drive.brake(true);
     }else if(Math.abs(m_Controller.getLeftY()) > 0.1 || Math.abs(m_Controller.getRightY()) > 0.1) {
-      m_Drive.tankDrive(-m_Controller.getLeftY() * 0.3, -m_Controller.getRightY() * 0.3);
+      
+      m_Drive.tankDrive(-m_Controller.getLeftY() * speedReductionConstant, -m_Controller.getRightY() * speedReductionConstant);
     } else {
       m_Drive.brake(false);
       m_Drive.centerPassed = false;
@@ -82,8 +99,8 @@ public class teleopDrive extends CommandBase {
     
     
     
-    SmartDashboard.putNumber("leftSpeed", m_Controller.getLeftY());
-    SmartDashboard.putNumber("rightSpeed", m_Controller.getRightY());
+    //SmartDashboard.putNumber("leftSpeed", m_Controller.getLeftY());
+    //SmartDashboard.putNumber("rightSpeed", m_Controller.getRightY());
   }
 
   // Called once the command ends or is interrupted.

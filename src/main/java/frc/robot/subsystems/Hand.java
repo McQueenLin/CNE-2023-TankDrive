@@ -98,7 +98,7 @@ public class Hand extends SubsystemBase{
     }
 
     public Command Closing(){
-        System.out.println("In closing");
+        //System.out.println("In closing");
         return runOnce( () -> {
             // while(true){
             // double currentPosition = HandMotorEncoder.getPosition();
@@ -122,12 +122,14 @@ public class Hand extends SubsystemBase{
         });
     }
 
+    //public Command 
+
     
         
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Hand Position", HandMotorEncoder.getPosition()); 
+        //SmartDashboard.putNumber("Hand Position", HandMotorEncoder.getPosition()); 
         SmartDashboard.putNumber("Speed", holdSpeed);
 
         
