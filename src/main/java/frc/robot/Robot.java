@@ -143,7 +143,7 @@ public class Robot extends TimedRobot {
     // SmartDashboard.putBoolean("Close", activated);
     
     CommandScheduler.getInstance().schedule(robotContainer.tDrive);
-    CommandScheduler.getInstance().schedule(Hand.getInstance().Opening());
+  
 
     
     // SmartDashboard.putBoolean("Robot.Detect", Robot.detect);
@@ -181,7 +181,7 @@ public class Robot extends TimedRobot {
     // }
     
     //handMotor.set(controller.getLeftY());
-
+    */
   }
 
   @Override

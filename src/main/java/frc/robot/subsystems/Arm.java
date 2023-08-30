@@ -30,12 +30,13 @@ public class Arm extends SubsystemBase {
 
     double currentPositionHoldArm;
     double currentPositionHoldElbow;
+    public static boolean resting = false;
 
     enum Position {
-        FLOOR(0, -90),
-        CUBE(-87, 69),
-        CONE(-88, -82),
-        DUNK(-90, 70),
+        FLOOR(0, -85),
+        CUBE(-78, -55), //high cube
+        CONE(-33, -18), //mid prep BUT NOT FOR CHUTE, PLEASE MAKE SAME
+        DUNK(-37, -41),
         REST(0, 0);
 
         public double arm;
@@ -88,12 +89,12 @@ public class Arm extends SubsystemBase {
         elbowPID.setOutputRange(-1,1);
         armPID.setOutputRange(-1,1);
 
-        elbowPID.setP(1);
+        elbowPID.setP(0.7);
         elbowPID.setI(0);
         elbowPID.setD(0);
         elbowPID.setFF(0.1);
 
-        armPID.setP(1);
+        armPID.setP(0.7);
         armPID.setI(0);
         armPID.setD(0);
         armPID.setFF(0.1);
@@ -111,32 +112,38 @@ public class Arm extends SubsystemBase {
 
     public Command dunk(){
         return runOnce( () -> {
+            resting = false;
             setPosition(Position.DUNK);
         });
     }
 
     public Command cube() {
         return runOnce( () -> {
+            resting = false;
             setPosition(Position.CUBE);
         }).andThen(moveArm());
     }
 
     public Command cone() {
         return runOnce( () -> {
+            resting = false;
             setPosition(Position.CONE);
         }).andThen(moveArm());
     }
 
     public Command floor(){
         return runOnce( () -> {
+            resting = false;
             setPosition(Position.FLOOR);
         });
     }
 
     public Command rest() {
         return runOnce( () -> {
+            resting = true;
             setPosition(Position.REST);
         }).andThen(moveArm());
+        
     }
 
     boolean idleMode = false;
@@ -148,6 +155,7 @@ public class Arm extends SubsystemBase {
     }
 
     public Command changePos(){
+        resting = false;
         //currentPositionHoldArm = currentPosition.arm;
         //currentPositionHoldElbow = currentPosition.elbow;
 
@@ -172,13 +180,13 @@ public class Arm extends SubsystemBase {
             }
 
             if(Math.abs(arm) > 0.05){
-                SmartDashboard.putNumber("arm", arm);
+                //SmartDashboard.putNumber("arm", arm);
                 //currentPositionHoldArm = currentPositionHoldArm + arm;
                 currentPosition.arm = currentPosition.arm + arm;
             }
 
             if(Math.abs(elbow) > 0.05){
-                SmartDashboard.putNumber("elbow", elbow);
+                //SmartDashboard.putNumber("elbow", elbow);
                 //currentPositionHoldElbow =  currentPositionHoldElbow - elbow;
                 currentPosition.elbow = currentPosition.elbow - elbow;
             }

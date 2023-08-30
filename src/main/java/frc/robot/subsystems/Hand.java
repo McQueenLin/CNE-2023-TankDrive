@@ -105,7 +105,7 @@ public class Hand extends SubsystemBase{
     }
 
     public Command Closing(){
-        System.out.println("In closing");
+        //System.out.println("In closing");
         return runOnce( () -> {
             // while(true){
             // double currentPosition = HandMotorEncoder.getPosition();

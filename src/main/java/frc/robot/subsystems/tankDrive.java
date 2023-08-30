@@ -57,9 +57,9 @@ public class tankDrive extends SubsystemBase {
   }
 
   public void tankDrive(double leftSpeed, double rightSpeed){
-    SmartDashboard.putNumber("Speed", starterSpeed);
-    SmartDashboard.putBoolean("Add speed", addSpeed);
-    SmartDashboard.putBoolean("Passed Center", centerPassed);
+    SmartDashboard.putNumber("B- Speed", starterSpeed);
+    SmartDashboard.putBoolean("B- Adding Speed", addSpeed);
+    SmartDashboard.putBoolean("B- Passed Center", centerPassed);
     //m_Drive.tankDrive(leftSpeed, rightSpeed);
     m_rightFrontMotor.set(rightSpeed);
     m_leftFrontMotor.set(leftSpeed);
@@ -97,7 +97,7 @@ public class tankDrive extends SubsystemBase {
 
   public void stop() {
       tankDrive(0, 0);
-      System.out.println("DPAD UP");
+      //System.out.println("DPAD UP");
   }
 
   public void balance(double pitch) {
@@ -124,7 +124,7 @@ public class tankDrive extends SubsystemBase {
         addSpeed = false;
       }
       
-      SmartDashboard.putBoolean("Moving!", true);
+      SmartDashboard.putBoolean("B- Moving!", true);
     } else if (pitch < -degree) {
       straight(-starterSpeed);
       if (starterSpeed < speedLimit) { // if wheels have not moved, increase speed
@@ -133,12 +133,12 @@ public class tankDrive extends SubsystemBase {
       } else {
         addSpeed = false;
       }
-      SmartDashboard.putBoolean("Moving!", true);
+      SmartDashboard.putBoolean("B- Moving!", true);
     } else {
       starterSpeed = 0.035;
       brake(true);
       stop();
-      SmartDashboard.putBoolean("Moving!", false);
+      SmartDashboard.putBoolean("B- Moving!", false);
       addSpeed = false;
       centerPassed = true;
     }
