@@ -149,6 +149,7 @@ public class Hand extends SubsystemBase{
     }
 
 
+
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Motor speed", 0.5);

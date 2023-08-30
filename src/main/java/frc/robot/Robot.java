@@ -151,7 +151,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    frEncoder.setPosition(0);
+    CommandScheduler.getInstance().schedule(Arm.getInstance().midConeAuto());
   }
 
   /** This function is called periodically during autonomous. */
