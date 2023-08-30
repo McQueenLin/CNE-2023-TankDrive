@@ -45,13 +45,14 @@ public class Hand extends SubsystemBase{
     public static double openHandPosition = 0.1;
     public static double CloseHandPosition = 3.5;
     public static double holdSpeed = 0.1;
+    public static double motorSpeed;
     double currentPosition;
     //DigitalInput sensorInput = new DigitalInput(1);
 
     // private static boolean hasHandSwitchDevice = false;
     //Timer timer = new Timer();
   
-    public static final double motorSpeed = 0.1;
+    
     public static final double lastPosition = 0;
     public static boolean hold = false;
     boolean autoclose = false;
@@ -91,7 +92,7 @@ public class Hand extends SubsystemBase{
             while(true){
                 currentPosition = HandMotorEncoder.getPosition();
                 if (currentPosition > openHandPosition) {
-                    HandMotor.set(-motorSpeed);
+                    HandMotor.set(-0.1);
                     holdSpeed = -0.1;
                     hold = false;
                 } 
@@ -111,7 +112,8 @@ public class Hand extends SubsystemBase{
             // double currentPosition = HandMotorEncoder.getPosition();
                 // if (currentPosition < HandPositionForClose) {
             holdSpeed = 0.5;
-            HandMotor.set(holdSpeed);
+            
+            HandMotor.set(motorSpeed);
             hold = true;
             });
         }
@@ -133,7 +135,7 @@ public class Hand extends SubsystemBase{
         return runOnce(() -> {
             if(!photoSwitch.get()){
                 if (currentPosition < CloseHandPosition) {
-                    HandMotor.set(0.5);
+                    HandMotor.set(motorSpeed);
                     holdSpeed = 0.5;
                     hold = false;
                 }
@@ -150,6 +152,8 @@ public class Hand extends SubsystemBase{
 
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("Motor speed", 0.5);
+        motorSpeed = SmartDashboard.getNumber("Motor speed", 0.5);
         SmartDashboard.putNumber("Hand Temperature", HandMotor.getMotorTemperature());
         SmartDashboard.putBoolean("Sensor", !photoSwitch.get());
         SmartDashboard.putNumber("Hand Position", HandMotorEncoder.getPosition()); 
