@@ -30,6 +30,8 @@ public class Arm extends SubsystemBase {
 
     double currentPositionHoldArm;
     double currentPositionHoldElbow;
+    
+    double target;
 
     enum Position {
         FLOOR(0, -90),
@@ -109,11 +111,6 @@ public class Arm extends SubsystemBase {
 
     }
 
-    public Command dunk(){
-        return runOnce( () -> {
-            setPosition(Position.DUNK);
-        });
-    }
 
     public Command cube() {
         return runOnce( () -> {
@@ -157,19 +154,7 @@ public class Arm extends SubsystemBase {
             double elbow = operatorController.getRightY();
             double arm = operatorController.getLeftY();
 
-            //System.out.println(Math.abs(arm));
-
-            if(Math.abs(elbow) > 0.05){
-                PID = false;
-            }else{
-                PID = true;
-            }
-
-            if(Math.abs(arm) > 0.05){
-                PID = false;
-            }else{
-                PID = true;
-            }
+            //System.out.println(Math.abs(arm))}
 
             if(Math.abs(arm) > 0.05){
                 SmartDashboard.putNumber("arm", arm);
@@ -186,6 +171,8 @@ public class Arm extends SubsystemBase {
 
 
     }
+
+
 
     public Command moveArm() { //Auto positioning
         return runOnce(() -> {
@@ -220,8 +207,34 @@ public class Arm extends SubsystemBase {
             }
         });
     }
-
 */
+
+    public Command dunk(){
+        target = currentPosition.elbow + 20;
+        double elbow = -0.1;
+        return runOnce(() -> {
+            while(true){
+                if(Math.abs(elbow) > 0.05 && currentPosition.elbow < target){
+                    //SmartDashboard.putNumber("elbow", elbow);
+                    //currentPositionHoldElbow =  currentPositionHoldElbow - elbow;
+                    currentPosition.elbow = currentPosition.elbow - elbow;
+                }
+                else if (currentPosition.elbow > target){
+                    // currentPosition.elbow = currentPosition.elbow;
+                    break;
+                }
+            }
+        }).andThen(moveArm()); 
+    }
+
+    public Command midConeAuto(){
+        return runOnce(() -> {
+            Hand.hold = true;
+            Arm.getInstance().cone().alongWith(Hand.getInstance().Holding()).andThen(Arm.getInstance().dunk().alongWith(Hand.getInstance().Holding()).andThen(Hand.getInstance().Opening().andThen(Arm.getInstance().rest())));
+            Hand.hold = false;
+        });
+    }
+
     @Override
     public void periodic() {
 
