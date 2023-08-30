@@ -41,7 +41,7 @@ public class RobotContainer {
   public static final CANSparkMax armMotor = new CANSparkMax(24,CANSparkMaxLowLevel.MotorType.kBrushless);
   public static final CANSparkMax elbowMotor = new CANSparkMax(41,CANSparkMaxLowLevel.MotorType.kBrushless);
   //public static final DigitalInput input = new DigitalInput(0);
-  public static final DigitalInput photoSwitch = new DigitalInput(0);
+  
   public static final CANSparkMax handMotor = new CANSparkMax(23, CANSparkMaxLowLevel.MotorType.kBrushless);
   
 
@@ -75,9 +75,12 @@ public class RobotContainer {
   private void configureBindings()
   {
 
-      System.out.println("Bind");
+      // System.out.println("Bind");
 
       Arm.getInstance().setDefaultCommand(Arm.getInstance().changePos());
+      Hand.getInstance().setDefaultCommand(Hand.getInstance().autoClose().repeatedly().unless(() -> operatorController.getLeftBumper()));
+
+      
       // Hand.getInstance().setDefaultCommand(Hand.getInstance().Opening());
     
       // operatorYButton.whileTrue(Arm.getInstance().rest());
@@ -87,9 +90,10 @@ public class RobotContainer {
 
       operatorLeftBumper.whileTrue(Hand.getInstance().Opening().repeatedly());
       
+    
+      //operatorRightBumper.whileTrue(Hand.getInstance().autoClose().repeatedly());
       operatorRightBumper.whileTrue(Hand.getInstance().Closing().repeatedly());
       operatorRightBumper.whileFalse(Hand.getInstance().Holding().repeatedly());
-    
+  
   }
- 
 }

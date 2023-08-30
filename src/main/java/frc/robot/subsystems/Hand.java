@@ -26,7 +26,9 @@ import edu.wpi.first.wpilibj.Joystick;
 import java.util.*;
 
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.*;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -38,8 +40,10 @@ public class Hand extends SubsystemBase{
     public RelativeEncoder HandMotorEncoder = HandMotor.getEncoder();
     public double handPosition;
 
+    public static final DigitalInput photoSwitch = new DigitalInput(0);
+
     public static double openHandPosition = 0.1;
-    public static double HandPositionForClose = 2;
+    public static double CloseHandPosition = 3.5;
     public static double holdSpeed = 0.1;
     double currentPosition;
     //DigitalInput sensorInput = new DigitalInput(1);
@@ -50,8 +54,11 @@ public class Hand extends SubsystemBase{
     public static final double motorSpeed = 0.1;
     public static final double lastPosition = 0;
     public static boolean hold = false;
+    boolean autoclose = false;
     // public static final double CUBE_CLOSING_FORCE = 0.8;
     // public static final double CONE_CLOSING_FORCE = 1.1
+
+
 
     private final static Hand INSTANCE = new Hand();
 
@@ -79,7 +86,7 @@ public class Hand extends SubsystemBase{
     // }
 
     public Command Opening(){
-        
+        //Test to see if the hand will reclose after opening before the item is placed
         return runOnce(() -> {
             while(true){
                 currentPosition = HandMotorEncoder.getPosition();
@@ -122,13 +129,32 @@ public class Hand extends SubsystemBase{
         });
     }
 
-    
-        
+    public Command autoClose(){
+        return runOnce(() -> {
+            if(!photoSwitch.get()){
+                if (currentPosition < CloseHandPosition) {
+                    HandMotor.set(0.5);
+                    holdSpeed = 0.5;
+                    hold = false;
+                }
+                else {
+                    holdSpeed = 0.05;
+                    HandMotor.set(0.05);
+                }
+            } else{
+                HandMotor.set(0);
+            }
+        });
+    }
+
 
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("Hand Temperature", HandMotor.getMotorTemperature());
+        SmartDashboard.putBoolean("Sensor", !photoSwitch.get());
         SmartDashboard.putNumber("Hand Position", HandMotorEncoder.getPosition()); 
         SmartDashboard.putNumber("Speed", holdSpeed);
+
 
         
     }

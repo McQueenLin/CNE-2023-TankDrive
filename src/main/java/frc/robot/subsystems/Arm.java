@@ -15,7 +15,6 @@ public class Arm extends SubsystemBase {
     public static final CANSparkMax armMotor = RobotContainer.armMotor;
     public static final CANSparkMax elbowMotor = RobotContainer.elbowMotor;
     //public static final DigitalInput input = RobotContainer.input;
-    public static final DigitalInput photoSwitch = RobotContainer.photoSwitch;
     private final SparkMaxPIDController armPID;
     private final SparkMaxPIDController elbowPID;
     private final SparkMaxPIDController armPIDHold;
@@ -101,6 +100,9 @@ public class Arm extends SubsystemBase {
 
         elbowPID.setOutputRange(-0.5,0.25);
         armPID.setOutputRange(-1,1);
+
+        armEncoder.setPosition(0);
+        elbowEncoder.setPosition(0);
 
         elbowMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         armMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -223,6 +225,7 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
 
+        SmartDashboard.putNumber("Elbow Temperature", elbowMotor.getMotorTemperature());
         SmartDashboard.putNumber("arm", armEncoder.getPosition());
         SmartDashboard.putNumber("P integral", elbowPID.getP());
         SmartDashboard.putNumber("Elbow", elbowEncoder.getPosition());

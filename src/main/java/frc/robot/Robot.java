@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.tankDrive;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.OperatorConstants;
@@ -22,6 +23,7 @@ import frc.robot.subsystems.tankDrive;
 
 import java.nio.file.attribute.AclFileAttributeView;
 
+import com.ctre.phoenixpro.Timestamp;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -59,6 +61,7 @@ public class Robot extends TimedRobot {
   public static int OpenCounter=0;
   public static boolean detect = false;
   public static boolean activated = false;
+  public XboxController operator = RobotContainer.operatorController;
 
   public CANSparkMax HandMotor = RobotContainer.handMotor;
   /**
@@ -133,45 +136,49 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    if(!activated)  detect = !robotContainer.photoSwitch.get();
-    SmartDashboard.putBoolean("Detect", detect);
-    SmartDashboard.putNumber("First", first);
-    SmartDashboard.putBoolean("Close", activated);
+    SmartDashboard.putBoolean("Left Bumper", operator.getLeftBumper());
+    // if(!activated)  detect = !robotContainer.photoSwitch.get();
+    // SmartDashboard.putBoolean("Detect", detect);
+    // SmartDashboard.putNumber("First", first);
+    // SmartDashboard.putBoolean("Close", activated);
     
     CommandScheduler.getInstance().schedule(robotContainer.tDrive);
-    SmartDashboard.putBoolean("Robot.Detect", Robot.detect);
-    if (detect && !activated)// && !driverController.getLeftBumper()) 
-    {
-      first ++;
+    CommandScheduler.getInstance().schedule(Hand.getInstance().Opening());
+
+    
+    // SmartDashboard.putBoolean("Robot.Detect", Robot.detect);
+    // if (detect && !activated)// && !driverController.getLeftBumper()) 
+    // {
+    //   first ++;
       
-      if (first < 5) 
-      {
+    //   if (first < 5) 
+    //   {
         
-        HandMotor.set(0.3);
-      } 
-      else 
-      {
-        HandMotor.set(0.1);
-        if(first > 200)
-        {
-          OpenCounter=0;
-          first = 0;
-          detect = false;
-          activated = true;
-        }
-      }
+    //     HandMotor.set(0.3);
+    //   } 
+    //   else 
+    //   {
+    //     HandMotor.set(0.1);
+    //     if(first > 200)
+    //     {
+    //       OpenCounter=0;
+    //       first = 0;
+    //       detect = false;
+    //       activated = true;
+    //     }
+    //   }
       
-    }
-    else
-    {
-      OpenCounter ++;
-      HandMotor.set(-0.05);
-      if(OpenCounter > 500) 
-      {
-        activated = false;
-        OpenCounter = 0;
-      }
-    }
+    // }
+    // else
+    // {
+    //   OpenCounter ++;
+    //   HandMotor.set(-0.05);
+    //   if(OpenCounter > 500) 
+    //   {
+    //     activated = false;
+    //     OpenCounter = 0;
+    //   }
+    // }
     
     //handMotor.set(controller.getLeftY());
 

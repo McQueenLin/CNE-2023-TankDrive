@@ -46,7 +46,7 @@ public class tankDrive extends SubsystemBase {
   private double degree = 4;
   private double prevVal;
   private boolean addSpeed = false;
-  private double speedLimit = 0.06;
+  private double speedLimit = 0.07;
   
 
   /** Creates a new ExampleSubsystem. */
@@ -103,9 +103,9 @@ public class tankDrive extends SubsystemBase {
   public void balance(double pitch) {
     brake(true);
     if (centerPassed) {
-      speedLimit = 0.05;
-    } else {
       speedLimit = 0.06;
+    } else {
+      speedLimit = 0.07;
     }
     
     //frontRight.setIdleMode(CANSparkMax.IdleMode.kBrake);
