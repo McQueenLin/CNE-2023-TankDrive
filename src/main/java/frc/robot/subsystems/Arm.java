@@ -9,6 +9,9 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.RobotContainer;
 import static frc.robot.RobotContainer.*;
+import frc.robot.auto.Charge;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 public class Arm extends SubsystemBase {
 
@@ -76,7 +79,7 @@ public class Arm extends SubsystemBase {
      * is private since this class is a Singleton. Code should use
      * the {@link #getInstance()} method to get the singleton instance.
      */
-    private Arm() {
+    public Arm() {
         this.elbowEncoder = elbowMotor.getEncoder();
 //        this.elbowEncoder.setPosition(0);
         this.armEncoder = armMotor.getEncoder();
@@ -227,13 +230,8 @@ public class Arm extends SubsystemBase {
         }).andThen(moveArm()); 
     }
 
-    public Command midConeAuto(){
-        return runOnce(() -> {
-            Hand.hold = true;
-            Arm.getInstance().cone().alongWith(Hand.getInstance().Holding()).andThen(Arm.getInstance().dunk().alongWith(Hand.getInstance().Holding()).andThen(Hand.getInstance().Opening().andThen(Arm.getInstance().rest())));
-            Hand.hold = false;
-        });
-    }
+    public Charge charge = new Charge();
+
 
     @Override
     public void periodic() {

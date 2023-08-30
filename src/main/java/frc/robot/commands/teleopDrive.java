@@ -22,7 +22,14 @@ import com.revrobotics.RelativeEncoder;
 public class teleopDrive extends CommandBase {
   private final tankDrive m_Drive;
   public XboxController m_Controller;
+<<<<<<< Updated upstream
   public RelativeEncoder frEncoder = tankDrive.m_rightFrontMotor.getEncoder();
+=======
+  
+  private double speedReductionConstant = 0.4;
+  private double timer = 0;
+  private boolean backToNormal = false;
+>>>>>>> Stashed changes
   
   private double adjSpeed = 0.05;
   
@@ -36,9 +43,10 @@ public class teleopDrive extends CommandBase {
    * @param subsystem The subsystem used by this command.
    */
   public teleopDrive(tankDrive subsystem, XboxController controller) {
-    m_Drive = subsystem;
+    this.m_Drive = subsystem;
     this.m_Controller = controller;
   }
+
 
   // Called when the command is initially scheduled.
   @Override
@@ -49,9 +57,16 @@ public class teleopDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+<<<<<<< Updated upstream
 
     SmartDashboard.putNumber("pitch", Robot.pitch);
     SmartDashboard.putNumber("Encoder", frEncoder.getPosition());
+=======
+    RelativeEncoder frEncoder = m_Drive.m_rightFrontMotor.getEncoder();
+    SmartDashboard.putNumber("Robot Pitch", Robot.pitch);
+    SmartDashboard.putNumber("Distance Encoder", frEncoder.getPosition());
+    SmartDashboard.putNumber("Speed, out of 1", speedReductionConstant);
+>>>>>>> Stashed changes
     
     //System.out.println(m_Controller.getPOV());
     // tank_Drive.setLeftMotors(m_leftSpeed);

@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.subsystems.tankDrive;
+import frc.robot.auto.Charge;
 
 import java.nio.file.attribute.AclFileAttributeView;
 
@@ -30,6 +31,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.*;
@@ -47,15 +49,13 @@ public class Robot extends TimedRobot {
   // public static final CANSparkMax armMotor = RobotContainer.armMotor;
   // public static final CANSparkMax elbowMotor = RobotContainer.elbowMotor;
   // public XboxController controller = new XboxController(0);
-  // public static final CANSparkMax handMotor = new CANSparkMax(7, MotorType.kBrushless);
+  
   private Command m_autonomousCommand;
 
   public RobotContainer robotContainer;
   public static double pitch;
-  public RelativeEncoder frEncoder = tankDrive.m_rightFrontMotor.getEncoder();
-  private double autoChargeInches = 68; //Community 54", ramp 14", cStation top 76"
-  private double inPerEncoder = 2.289; // 19 inches per 8.3 encoder value, one wheel rotation
-  private double distance = 0;
+  public RelativeEncoder frEncoder = RobotContainer.rightFrontMotor.getEncoder();
+  
   
   public static int first = 0;
   public static int OpenCounter=0;
@@ -64,6 +64,13 @@ public class Robot extends TimedRobot {
   public XboxController operator = RobotContainer.operatorController;
 
   public CANSparkMax HandMotor = RobotContainer.handMotor;
+<<<<<<< Updated upstream
+=======
+  Thread m_visionThread;
+
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
+  Command charge = new Charge();
+>>>>>>> Stashed changes
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -102,22 +109,27 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {}
 
+  // public Command getAutonomousCommand() {
+  //   return m_chooser.getSelected();
+  // }
+
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    CommandScheduler.getInstance().schedule(Arm.getInstance().midConeAuto());
+    // m_autonomousCommand = getAutonomousCommand();
+    
+    // if (m_autonomousCommand != null) {
+    //   m_autonomousCommand.cancel();
+    // }
+    CommandScheduler.getInstance().schedule(robotContainer.midConeAuto);
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    distance = frEncoder.getPosition() * inPerEncoder; //in inches
-    if (Math.abs(distance) < autoChargeInches) {
-      robotContainer.tank_Drive.straight(-0.1);
-      
-    } else {
-      robotContainer.tank_Drive.balance(pitch);
-    }
+    //CommandScheduler.getInstance().run()
+    //SendableChooser
+    
   }
 
   @Override
@@ -127,9 +139,8 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
+
+    
     
   }
 
