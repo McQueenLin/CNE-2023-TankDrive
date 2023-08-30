@@ -34,7 +34,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.*;
 import com.revrobotics.RelativeEncoder;
-
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.CvSink;
+import edu.wpi.first.cscore.CvSource;
+import edu.wpi.first.cscore.UsbCamera;
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -64,6 +71,7 @@ public class Robot extends TimedRobot {
   public XboxController operator = RobotContainer.operatorController;
 
   public CANSparkMax HandMotor = RobotContainer.handMotor;
+  Thread m_visionThread;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -74,6 +82,44 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
     robotContainer.navX.resetGyro();
+    m_visionThread =
+    new Thread(
+      () -> {
+        // Get the UsbCamera from CameraServer
+        UsbCamera camera = CameraServer.startAutomaticCapture();
+        // Set the resolution
+        camera.setResolution(320, 240);
+
+        // Get a CvSink. This will capture Mats from the camera
+        CvSink cvSink = CameraServer.getVideo();
+        // Setup a CvSource. This will send images back to the Dashboard
+        CvSource outputStream = CameraServer.putVideo("Rectangle", 320, 240);
+
+        // Mats are very memory expensive. Lets reuse this Mat.
+        Mat mat = new Mat();
+
+        // This cannot be 'true'. The program will never exit if it is. This
+        // lets the robot stop this thread when restarting robot code or
+        // deploying.
+        while (!Thread.interrupted()) {
+          // Tell the CvSink to grab a frame from the camera and put it
+          // in the source mat.  If there is an error notify the output.
+          if (cvSink.grabFrame(mat) == 0) {
+            // Send the output the error.
+            outputStream.notifyError(cvSink.getError());
+            // skip the rest of the current iteration
+            continue;
+          }
+          // Put a rectangle on the image
+          Imgproc.rectangle(
+              mat, new Point(250, 200), new Point(350, 300), new Scalar(255, 255, 255), 5);
+          // Give the output stream a new image to display
+          outputStream.putFrame(mat);
+        }
+      });
+    m_visionThread.setDaemon(true);
+    m_visionThread.start();
+
     
   }
 
@@ -141,12 +187,8 @@ public class Robot extends TimedRobot {
     // SmartDashboard.putBoolean("Detect", detect);
     // SmartDashboard.putNumber("First", first);
     // SmartDashboard.putBoolean("Close", activated);
-    
     CommandScheduler.getInstance().schedule(robotContainer.tDrive);
-  
-
-    
-    // SmartDashboard.putBoolean("Robot.Detect", Robot.detect);
+     // SmartDashboard.putBoolean("Robot.Detect", Robot.detect);
     // if (detect && !activated)// && !driverController.getLeftBumper()) 
     // {
     //   first ++;
@@ -181,7 +223,7 @@ public class Robot extends TimedRobot {
     // }
     
     //handMotor.set(controller.getLeftY());
-    */
+    
   }
 
   @Override

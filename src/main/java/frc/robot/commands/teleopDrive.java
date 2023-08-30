@@ -27,6 +27,7 @@ public class teleopDrive extends CommandBase {
   public RelativeEncoder frEncoder = tankDrive.m_rightFrontMotor.getEncoder();
   private double speedReductionConstant = 0.4;
   private double timer = 0;
+  private boolean backToNormal = false;
   
   private double adjSpeed = 0.05;
   
@@ -65,15 +66,20 @@ public class teleopDrive extends CommandBase {
       timer++;
     }
      
-    //if(Arm.resting) {
+    if(Arm.resting) {
+      if (backToNormal) {
+        speedReductionConstant = 0.4;
+        backToNormal = false;
+      }
       if (m_Controller.getYButton() && timer >= 10) {
         speedReductionConstant = (speedReductionConstant == 0.7 ? 0.4:0.7);
         timer = 0;
         //this.frEncoder.setPosition(0);        
       }
-    //} else {
-      //speedReductionConstant = 0.2;
-    //}
+    } else {
+      speedReductionConstant = 0.2;
+      backToNormal = true;
+    }
 
     if (m_Controller.getPOV() == 0) {
       m_Drive.straight(adjSpeed);

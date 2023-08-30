@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Hand;
+import edu.wpi.first.cscore.*;
+import edu.wpi.first.cameraserver.CameraServer;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -46,6 +48,7 @@ public class RobotContainer {
   
 
   public static final NavXGyro navX = NavXGyro.getInstance();
+  
  
   
   JoystickButton operatorLeftBumper = new JoystickButton(operatorController, Button.kLeftBumper.value);
@@ -56,6 +59,7 @@ public class RobotContainer {
   JoystickButton operatorAButton = new JoystickButton(operatorController, Button.kA.value);
   JoystickButton operatorBButton = new JoystickButton(operatorController, Button.kB.value);
   JoystickButton operatorXButton = new JoystickButton(operatorController, Button.kX.value);
+  
   // POVButton driverDpadUp = new POVButton(m_driverController, 0);
   // POVButton driverDpadRight = new POVButton(m_driverController, 90);
   // POVButton driverDpadDown = new POVButton(m_driverController, 180);
