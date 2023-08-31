@@ -11,6 +11,8 @@ import frc.robot.commands.teleopDrive;
 import frc.robot.subsystems.tankDrive;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -76,10 +78,25 @@ public class RobotContainer {
   // POVButton driverDpadLeft = new POVButton(m_driverController, 270);
  
   public tankDrive tank_Drive = new tankDrive();
+
   //public Hand hand = new Hand();
   // public RelativeEncoder frEncoder = tank_Drive.m_rightFrontMotor.getEncoder();
 
   public teleopDrive tDrive = new teleopDrive(tank_Drive, driverController);
+
+  Arm arm = Arm.getInstance();
+  Hand hand = Hand.getInstance();
+
+  Command Charge = new Charge();
+
+  public SequentialCommandGroup midConeAuto = hand.setSensorOn().andThen(new ParallelCommandGroup(arm.cone(), hand.autoClose())).andThen(new WaitCommand(0.5)).andThen(new ParallelCommandGroup(arm.dunk(),hand.autoClose()))
+  .andThen(new WaitCommand(1)).andThen(hand.Opening()).andThen(new WaitCommand(0.5)).andThen(arm.undunk()).andThen(new WaitCommand(1))
+  .andThen(arm.rest()).andThen(hand.setFalse()).andThen(hand.setSensorOff()).andThen(Charge.repeatedly());
+
+  public SequentialCommandGroup highCubeAuto = hand.setSensorOn().andThen(new ParallelCommandGroup(arm.cube(), hand.autoClose())).andThen(new WaitCommand(0.5)).andThen(new ParallelCommandGroup(arm.dunk(),hand.autoClose()))
+  .andThen(new WaitCommand(1)).andThen(hand.Opening()).andThen(new WaitCommand(0.5)).andThen(arm.undunk()).andThen(new WaitCommand(1))
+  .andThen(arm.rest()).andThen(hand.setFalse()).andThen(hand.setSensorOff()).andThen(Charge);
+
   
   public RobotContainer(){
         // Configure the trigger bindings
@@ -99,7 +116,7 @@ public class RobotContainer {
       // Hand.getInstance().setDefaultCommand(Hand.getInstance().Opening());
     
       operatorXButton.whileTrue(Arm.getInstance().cone().andThen(new WaitCommand(0.5)).andThen(Arm.getInstance().coneDunk()));
-      operatorBButton.whileTrue(Arm.getInstance().cube().andThen(Arm.getInstance().cubeDunk()));
+      operatorBButton.whileTrue(Arm.getInstance().cone().andThen(new WaitCommand(0.5)).andThen(Arm.getInstance().coneDunk()));
       operatorYButton.whileTrue(Arm.getInstance().rest());
       operatorAButton.whileTrue(Arm.getInstance().floor());
 

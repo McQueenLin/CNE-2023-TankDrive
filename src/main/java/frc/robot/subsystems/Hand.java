@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import com.fasterxml.jackson.core.JsonToken;
 
 import java.util.concurrent.Delayed;
@@ -141,6 +142,18 @@ public class Hand extends SubsystemBase{
     public Command setFalse(){
         return runOnce(() -> {
             hold = false;
+        });
+    }
+
+    public Command setSensorOn(){
+        return runOnce(() -> {
+            photoSwitchOn = true;
+        });
+    }
+
+    public Command setSensorOff(){
+        return runOnce(() -> {
+            photoSwitchOn = false;
         });
     }
 

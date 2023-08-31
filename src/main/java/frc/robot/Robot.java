@@ -8,21 +8,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.subsystems.tankDrive;
-import frc.robot.RobotContainer;
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.teleopDrive;
-import frc.robot.subsystems.tankDrive;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.subsystems.tankDrive;
 import frc.robot.auto.Charge;
+import frc.robot.auto.midConeAuto;
 
 import java.nio.file.attribute.AclFileAttributeView;
 
@@ -75,10 +63,10 @@ public class Robot extends TimedRobot {
   public CANSparkMax HandMotor = RobotContainer.handMotor;
   Thread m_visionThread;
 
+  // Arm arm = new Arm();
+  //Command midConeAuo = new midConeAuto(arm);
   SendableChooser<Command> m_chooser = new SendableChooser<>();
-  Command Charge = new Charge();
 
-  SequentialCommandGroup midConeAuto;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -162,17 +150,14 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    Hand.getInstance().hold = true;
-    midConeAuto = Arm.getInstance().cube().andThen(new WaitCommand(1)).andThen(Arm.getInstance().dunk())
-    .andThen(new WaitCommand(1)).andThen(Arm.getInstance().undunk()).andThen(new WaitCommand(2))
-    .andThen(Arm.getInstance().rest()).andThen(Hand.getInstance().setFalse().andThen(Charge.repeatedly()));
-        
-    midConeAuto.schedule();
+    
+    
+  
 
     // if (m_autonomousCommand != null) {
     //   m_autonomousCommand.cancel();
     // }
-    //CommandScheduler.getInstance().schedule(Charge.repeatedly());
+    CommandScheduler.getInstance().schedule(robotContainer.midConeAuto);
   }
 
   /** This function is called periodically during autonomous. */

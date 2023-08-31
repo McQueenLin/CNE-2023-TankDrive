@@ -38,14 +38,16 @@ public class Arm extends SubsystemBase {
     static double armChange;
     static double elbowChange;
     
+    boolean ConeDunk = false;
+
     double target;
 
     enum Position {
         FLOOR(0, -90),
         CUBE(-78, 0),
         CUBEDUNK(-78, -60),
-        CONE(-33, 0),
-        CONEDUNK(-33, -18),
+        CONE(-28, 0),
+        CONEDUNK(-28, -18),
         REST(0, 0),
         UNDUNK(armChange, elbowChange);
         public double arm;
@@ -109,7 +111,7 @@ public class Arm extends SubsystemBase {
         armPID.setFF(0.1);
 
         elbowPID.setOutputRange(-0.3,0.3);
-        armPID.setOutputRange(-0.3,0.3);
+        armPID.setOutputRange(-0.7,0.7);
 
 
 
@@ -133,6 +135,7 @@ public class Arm extends SubsystemBase {
         return runOnce(() -> {
             resting = false;
             setPosition(Position.CUBEDUNK);
+            System.out.println("Cube dunk");
         }).andThen(moveArm());
     }
 
@@ -140,6 +143,7 @@ public class Arm extends SubsystemBase {
         return runOnce( () -> {
             resting = false;
             setPosition(Position.CONE);
+            ConeDunk = false;
         }).andThen(moveArm());
     }
 
@@ -147,6 +151,7 @@ public class Arm extends SubsystemBase {
         return runOnce(() -> {
             resting = false;
             setPosition(Position.CONEDUNK);
+            ConeDunk = true;
         }).andThen(moveArm());
     }
 
@@ -240,7 +245,7 @@ public class Arm extends SubsystemBase {
 */
 
     public Command dunk(){
-        target = currentPosition.elbow - 50;
+        target = currentPosition.elbow - 60;
         this.elbowChange = currentPosition.elbow;
         double elbow = 0.1;
         SmartDashboard.putNumber("Elbow change", elbowChange);
@@ -274,6 +279,7 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
        
+        SmartDashboard.putBoolean("Cone dunk", ConeDunk);
         SmartDashboard.putNumber("target", currentPositionHoldArm);
         SmartDashboard.putNumber("Elbow Temperature", elbowMotor.getMotorTemperature());
         SmartDashboard.putNumber("arm", armEncoder.getPosition());
