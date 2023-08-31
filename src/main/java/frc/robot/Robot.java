@@ -95,12 +95,12 @@ public class Robot extends TimedRobot {
         // Get the UsbCamera from CameraServer
         UsbCamera camera = CameraServer.startAutomaticCapture();
         // Set the resolution
-        camera.setResolution(320, 240);
+        camera.setResolution(160, 240);
 
         // Get a CvSink. This will capture Mats from the camera
         CvSink cvSink = CameraServer.getVideo();
         // Setup a CvSource. This will send images back to the Dashboard
-        CvSource outputStream = CameraServer.putVideo("Rectangle", 320, 240);
+        CvSource outputStream = CameraServer.putVideo("Rectangle", 160, 240);
 
         // Mats are very memory expensive. Lets reuse this Mat.
         Mat mat = new Mat();
@@ -163,11 +163,11 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     Hand.getInstance().hold = true;
-    // midConeAuto = Arm.getInstance().cube().andThen(new WaitCommand(1)).andThen(Arm.getInstance().dunk()).andThen(
-     //  new WaitCommand(1)).andThen(Arm.getInstance().undunk()).andThen(new WaitCommand(2)).andThen
-     //  (Arm.getInstance().rest()).andThen(Hand.getInstance().setFalse().andThen(Charge.repeatedly()));
+    midConeAuto = Arm.getInstance().cube().andThen(new WaitCommand(1)).andThen(Arm.getInstance().dunk())
+    .andThen(new WaitCommand(1)).andThen(Arm.getInstance().undunk()).andThen(new WaitCommand(2))
+    .andThen(Arm.getInstance().rest()).andThen(Hand.getInstance().setFalse().andThen(Charge.repeatedly()));
         
-    //midConeAuto.schedule();
+    midConeAuto.schedule();
 
     // if (m_autonomousCommand != null) {
     //   m_autonomousCommand.cancel();

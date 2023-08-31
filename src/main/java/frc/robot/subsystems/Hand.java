@@ -42,11 +42,14 @@ public class Hand extends SubsystemBase{
 
     public static final DigitalInput photoSwitch = new DigitalInput(0);
 
-    public static double openHandPosition = 0.1;
-    public static double CloseHandPosition = 3.5;
+    public static double openHandPosition = 0.15;
+    public static double CloseHandPosition = 3.8;
     public static double holdSpeed = 0.1;
     public static double motorSpeed;
     double currentPosition;
+    boolean photoSwitchOn = false;
+    
+    
     //DigitalInput sensorInput = new DigitalInput(1);
 
     // private static boolean hasHandSwitchDevice = false;
@@ -76,6 +79,8 @@ public class Hand extends SubsystemBase{
     private Hand(){
         HandMotorEncoder.setPosition(0);
         HandMotor.set(0);
+        HandMotor.getPIDController().setP(0.7);
+        SmartDashboard.putNumber("Motor speed", 0.5);
         
     }
 
@@ -95,6 +100,7 @@ public class Hand extends SubsystemBase{
                     HandMotor.set(-0.1);
                     holdSpeed = -0.1;
                     hold = false;
+                    photoSwitchOn = false;
                 } 
                 else {
                     HandMotor.set(0);
@@ -104,6 +110,8 @@ public class Hand extends SubsystemBase{
             }     
         });
     }
+
+    
 
     public Command Closing(){
         return runOnce( () -> {
@@ -138,14 +146,29 @@ public class Hand extends SubsystemBase{
 
     public Command autoClose(){
         return runOnce(() -> {
-            if(!photoSwitch.get()){
+            if(!photoSwitch.get() || photoSwitchOn == true){
+                photoSwitchOn = true;
+                currentPosition = HandMotorEncoder.getPosition();
                 if (currentPosition < CloseHandPosition) {
                     HandMotor.set(motorSpeed);
-                    holdSpeed = 0.5;
                     hold = false;
                 }
-                else {
+                // else if(currentPosition > 6){
+                //     while(true){
+                //         if (currentPosition > openHandPosition) {
+                //             HandMotor.set(-0.1);
+                //             hold = false;
+                //         } 
+                //         else {
+                //             HandMotor.set(0);
+                //             holdSpeed = 0;
+                //             break;
+                //          }
+                //     }    
+                // }
+                else{
                     holdSpeed = 0.05;
+                    SmartDashboard.putString("HOLDING", "HOLDING");
                     HandMotor.set(0.05);
                 }
             } else{
@@ -158,7 +181,6 @@ public class Hand extends SubsystemBase{
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Motor speed", 0.5);
         motorSpeed = SmartDashboard.getNumber("Motor speed", 0.5);
         SmartDashboard.putNumber("Hand Temperature", HandMotor.getMotorTemperature());
         SmartDashboard.putBoolean("Sensor", !photoSwitch.get());

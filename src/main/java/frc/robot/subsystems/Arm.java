@@ -42,9 +42,10 @@ public class Arm extends SubsystemBase {
 
     enum Position {
         FLOOR(0, -90),
-        CUBE(-75, 54),
-        CONE(-33, -18),
-        //DUNK(-90, 70),
+        CUBE(-78, 0),
+        CUBEDUNK(-78, -60),
+        CONE(-33, 0),
+        CONEDUNK(-33, -18),
         REST(0, 0),
         UNDUNK(armChange, elbowChange);
         public double arm;
@@ -107,8 +108,10 @@ public class Arm extends SubsystemBase {
         armPID.setD(0);
         armPID.setFF(0.1);
 
-        elbowPID.setOutputRange(-0.5,0.25);
-        armPID.setOutputRange(-1,1);
+        elbowPID.setOutputRange(-0.3,0.3);
+        armPID.setOutputRange(-0.3,0.3);
+
+
 
         armEncoder.setPosition(0);
         elbowEncoder.setPosition(0);
@@ -126,10 +129,24 @@ public class Arm extends SubsystemBase {
         }).andThen(moveArm());
     }
 
+    public Command cubeDunk(){
+        return runOnce(() -> {
+            resting = false;
+            setPosition(Position.CUBEDUNK);
+        }).andThen(moveArm());
+    }
+
     public Command cone() {
         return runOnce( () -> {
             resting = false;
             setPosition(Position.CONE);
+        }).andThen(moveArm());
+    }
+
+    public Command coneDunk(){
+        return runOnce(() -> {
+            resting = false;
+            setPosition(Position.CONEDUNK);
         }).andThen(moveArm());
     }
 

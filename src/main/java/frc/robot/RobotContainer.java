@@ -11,6 +11,7 @@ import frc.robot.commands.teleopDrive;
 import frc.robot.subsystems.tankDrive;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.XboxController;
@@ -97,9 +98,9 @@ public class RobotContainer {
       
       // Hand.getInstance().setDefaultCommand(Hand.getInstance().Opening());
     
-      operatorXButton.whileTrue(Arm.getInstance().rest());
-      operatorBButton.whileTrue(Arm.getInstance().cone());
-      operatorYButton.whileTrue(Arm.getInstance().cube());
+      operatorXButton.whileTrue(Arm.getInstance().cone().andThen(new WaitCommand(0.5)).andThen(Arm.getInstance().coneDunk()));
+      operatorBButton.whileTrue(Arm.getInstance().cube().andThen(Arm.getInstance().cubeDunk()));
+      operatorYButton.whileTrue(Arm.getInstance().rest());
       operatorAButton.whileTrue(Arm.getInstance().floor());
 
       operatorLeftBumper.whileTrue(Hand.getInstance().Opening().repeatedly());

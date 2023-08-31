@@ -97,11 +97,7 @@ public class teleopDrive extends CommandBase {
       //m_Drive.balance(Robot.pitch);
     } else if (m_Controller.getXButton()) {
       m_Drive.brake(true);
-    }else if(Math.abs(m_Controller.getLeftY()) > 0.1 || Math.abs(m_Controller.getRightY()) > 0.1) {
       
-      m_Drive.tankDrive(-m_Controller.getLeftY() * speedReductionConstant, -m_Controller.getRightY() * speedReductionConstant);
-    } else {
-      m_Drive.brake(false);
       m_Drive.centerPassed = false;
       m_Drive.straight(0);
     }
