@@ -24,10 +24,11 @@ public class Arm extends SubsystemBase {
     private final SparkMaxPIDController ElbowPIDHold;
 
 
-    private RelativeEncoder elbowEncoder;
-    private RelativeEncoder armEncoder;
+    public static RelativeEncoder elbowEncoder;
+    public static RelativeEncoder armEncoder;
 
-    Position currentPosition = Position.REST;
+    Position currentPosition = Position.START;
+            
 
     boolean PID = true;
 
@@ -43,12 +44,14 @@ public class Arm extends SubsystemBase {
     double target;
 
     enum Position {
-        FLOOR(0, -90),
+        FLOOR(4, -90),
         CUBE(-78, 0),
         CUBEDUNK(-78, -60),
         CONE(-28, 0),
-        CONEDUNK(-28, -18),
-        REST(0, 0),
+        CONEDUNK(-28, -30),
+        REST(4, 2),
+        START(0, 0),
+        CHUTE(0, -45),
         UNDUNK(armChange, elbowChange);
         public double arm;
         public double elbow;
@@ -110,7 +113,7 @@ public class Arm extends SubsystemBase {
         armPID.setD(0);
         armPID.setFF(0.1);
 
-        elbowPID.setOutputRange(-0.3,0.3);
+        elbowPID.setOutputRange(-0.5,0.5);
         armPID.setOutputRange(-0.7,0.7);
 
 
@@ -118,8 +121,8 @@ public class Arm extends SubsystemBase {
         armEncoder.setPosition(0);
         elbowEncoder.setPosition(0);
 
-        elbowMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-        armMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        elbowMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        armMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
     }
 
@@ -131,11 +134,16 @@ public class Arm extends SubsystemBase {
         }).andThen(moveArm());
     }
 
+    public Command chute(){
+        return runOnce(() -> {
+            resting = false;
+            setPosition(Position.CHUTE);
+        }).andThen(moveArm());
+    }
     public Command cubeDunk(){
         return runOnce(() -> {
             resting = false;
             setPosition(Position.CUBEDUNK);
-            System.out.println("Cube dunk");
         }).andThen(moveArm());
     }
 
@@ -191,18 +199,24 @@ public class Arm extends SubsystemBase {
 
             //System.out.println(Math.abs(arm))}
 
-            if(Math.abs(arm) > 0.05){
-                //SmartDashboard.putNumber("arm", arm);
-                //currentPositionHoldArm = currentPositionHoldArm + arm;
-                currentPosition.arm = currentPosition.arm + arm;
+            
+            //ELBOW, CANNOT USE POSIITONS...ELBOW BEAUSE NOT CONSTANT
+            if (currentPosition.elbow >=  0) { //beyond resting limit, one way 
+                if(elbow > 0.05) currentPosition.elbow = currentPosition.elbow - elbow;
+            } else if (currentPosition.elbow <= -90) { //beyond floor limit, one way 
+                if(elbow < -0.05) currentPosition.elbow = currentPosition.elbow - elbow;
+            } else {
+                if(Math.abs(elbow) > 0.05) currentPosition.elbow = currentPosition.elbow - elbow;
             }
-
-            if(Math.abs(elbow) > 0.05){
-                //SmartDashboard.putNumber("elbow", elbow);
-                //currentPositionHoldElbow =  currentPositionHoldElbow - elbow;
-                currentPosition.elbow = currentPosition.elbow - elbow;
-            }
-        }).andThen(moveArm()); //}).andThen(moveArm())
+    
+            //ARM
+            if (currentPosition.arm >=  0) { //beyond resting limit, one way 
+                if(arm < -0.05) currentPosition.arm = currentPosition.arm + arm;
+            } else if (currentPosition.arm <= -75) { //beyond tall limit, one way 
+                if(arm > 0.05) currentPosition.arm = currentPosition.arm + arm;
+            } else {
+                if(Math.abs(arm) > 0.05) currentPosition.arm = currentPosition.arm + arm; 
+            }        }).andThen(moveArm()); //}).andThen(moveArm())
 
 
     }
@@ -248,7 +262,7 @@ public class Arm extends SubsystemBase {
         target = currentPosition.elbow - 60;
         this.elbowChange = currentPosition.elbow;
         double elbow = 0.1;
-        SmartDashboard.putNumber("Elbow change", elbowChange);
+        //.putNumber("Elbow change", elbowChange);
         return runOnce(() -> {
             while(true){
                 SmartDashboard.putBoolean("dunk", Math.abs(elbow) > 0.05 && currentPosition.elbow < target);
@@ -279,13 +293,9 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
        
-        SmartDashboard.putBoolean("Cone dunk", ConeDunk);
-        SmartDashboard.putNumber("target", currentPositionHoldArm);
-        SmartDashboard.putNumber("Elbow Temperature", elbowMotor.getMotorTemperature());
-        SmartDashboard.putNumber("arm", armEncoder.getPosition());
-        SmartDashboard.putNumber("P integral", elbowPID.getP());
-        SmartDashboard.putNumber("Elbow", elbowEncoder.getPosition());
-
+        //SmartDashboard.putBoolean("Cone dunk", ConeDunk);
+        //SmartDashboard.putNumber("target", currentPositionHoldArm);
+        
 
 
     }

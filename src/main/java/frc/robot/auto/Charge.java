@@ -15,8 +15,14 @@ public class Charge extends CommandBase {
    
 
     //private final tankDrive tankDrive;
+    //private final static Charge INSTANCE = new Charge();
     tankDrive tankDrive = new tankDrive();
     
+    // @SuppressWarnings("WeakerAccess")
+    // public static Charge getInstance() {
+    //     return INSTANCE;
+    // }
+
 
     public Charge() {
         //this.tankDrive = tankDrive;

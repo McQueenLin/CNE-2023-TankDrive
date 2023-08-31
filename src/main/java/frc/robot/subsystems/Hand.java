@@ -37,14 +37,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 
 public class Hand extends SubsystemBase{
-    public CANSparkMax HandMotor = RobotContainer.handMotor;
-    public RelativeEncoder HandMotorEncoder = HandMotor.getEncoder();
+    public static CANSparkMax HandMotor = RobotContainer.handMotor;
+    public static RelativeEncoder HandMotorEncoder = HandMotor.getEncoder();
     public double handPosition;
 
-    public static final DigitalInput photoSwitch = new DigitalInput(0);
+    public static final DigitalInput photoSwitch = RobotContainer.PhotoSwitch;
 
     public static double openHandPosition = 0.15;
-    public static double CloseHandPosition = 3.8;
+    public static double CloseHandPosition = 4.5;
     public static double holdSpeed = 0.1;
     public static double motorSpeed;
     double currentPosition;
@@ -181,7 +181,7 @@ public class Hand extends SubsystemBase{
                 // }
                 else{
                     holdSpeed = 0.05;
-                    SmartDashboard.putString("HOLDING", "HOLDING");
+                    //SmartDashboard.putString("HOLDING", "HOLDING");
                     HandMotor.set(0.05);
                 }
             } else{
@@ -194,11 +194,8 @@ public class Hand extends SubsystemBase{
 
     @Override
     public void periodic() {
-        motorSpeed = SmartDashboard.getNumber("Motor speed", 0.5);
-        SmartDashboard.putNumber("Hand Temperature", HandMotor.getMotorTemperature());
-        SmartDashboard.putBoolean("Sensor", !photoSwitch.get());
-        SmartDashboard.putNumber("Hand Position", HandMotorEncoder.getPosition()); 
-        SmartDashboard.putNumber("Speed", holdSpeed);
+        
+        //SmartDashboard.putNumber("Speed", holdSpeed);
 
 
         

@@ -12,6 +12,7 @@ import frc.robot.subsystems.tankDrive;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -71,7 +72,7 @@ public class RobotContainer {
   JoystickButton operatorAButton = new JoystickButton(operatorController, Button.kA.value);
   JoystickButton operatorBButton = new JoystickButton(operatorController, Button.kB.value);
   JoystickButton operatorXButton = new JoystickButton(operatorController, Button.kX.value);
-  
+  POVButton operatorPOV = new POVButton(operatorController, -1);
   // POVButton driverDpadUp = new POVButton(m_driverController, 0);
   // POVButton driverDpadRight = new POVButton(m_driverController, 90);
   // POVButton driverDpadDown = new POVButton(m_driverController, 180);
@@ -88,14 +89,17 @@ public class RobotContainer {
   Hand hand = Hand.getInstance();
 
   Command Charge = new Charge();
+  public static final DigitalInput PhotoSwitch = new DigitalInput(0);
+  //public RepeatCommand charge = Charge.repeatedly();
 
   public SequentialCommandGroup midConeAuto = hand.setSensorOn().andThen(new ParallelCommandGroup(arm.cone(), hand.autoClose())).andThen(new WaitCommand(0.5)).andThen(new ParallelCommandGroup(arm.dunk(),hand.autoClose()))
   .andThen(new WaitCommand(1)).andThen(hand.Opening()).andThen(new WaitCommand(0.5)).andThen(arm.undunk()).andThen(new WaitCommand(1))
-  .andThen(arm.rest()).andThen(hand.setFalse()).andThen(hand.setSensorOff()).andThen(Charge.repeatedly());
+  .andThen(arm.rest()).andThen(hand.setFalse()).andThen(hand.setSensorOff());
 
   public SequentialCommandGroup highCubeAuto = hand.setSensorOn().andThen(new ParallelCommandGroup(arm.cube(), hand.autoClose())).andThen(new WaitCommand(0.5)).andThen(new ParallelCommandGroup(arm.dunk(),hand.autoClose()))
   .andThen(new WaitCommand(1)).andThen(hand.Opening()).andThen(new WaitCommand(0.5)).andThen(arm.undunk()).andThen(new WaitCommand(1))
-  .andThen(arm.rest()).andThen(hand.setFalse()).andThen(hand.setSensorOff()).andThen(Charge);
+  .andThen(arm.rest()).andThen(hand.setFalse()).andThen(hand.setSensorOff());
+  
 
   
   public RobotContainer(){
@@ -115,10 +119,11 @@ public class RobotContainer {
       
       // Hand.getInstance().setDefaultCommand(Hand.getInstance().Opening());
     
-      operatorXButton.whileTrue(Arm.getInstance().cone().andThen(new WaitCommand(0.5)).andThen(Arm.getInstance().coneDunk()));
       operatorBButton.whileTrue(Arm.getInstance().cone().andThen(new WaitCommand(0.5)).andThen(Arm.getInstance().coneDunk()));
-      operatorYButton.whileTrue(Arm.getInstance().rest());
+      operatorYButton.whileTrue(Arm.getInstance().cube().andThen(new WaitCommand(1)).andThen(Arm.getInstance().cubeDunk()));
+      operatorPOV.whileTrue(Arm.getInstance().rest());
       operatorAButton.whileTrue(Arm.getInstance().floor());
+      operatorXButton.whileTrue(Arm.getInstance().chute());
 
       operatorLeftBumper.whileTrue(Hand.getInstance().Opening().repeatedly());
       

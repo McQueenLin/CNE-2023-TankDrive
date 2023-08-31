@@ -51,7 +51,7 @@ public class tankDrive extends SubsystemBase {
   public static RelativeEncoder frEncoder = RobotContainer.rightFrontMotor.getEncoder();
   private double autoChargeInches = 68; //Community 54", ramp 14", cStation top 76"
   private double inPerEncoder = 2.289; // 19 inches per 8.3 encoder value, one wheel rotation
-  private double distance = 0;
+  public static double distance = 0;
   private boolean logic2 = false;
  
   
@@ -65,7 +65,7 @@ public class tankDrive extends SubsystemBase {
 
   public void tankDrive(double leftSpeed, double rightSpeed){
     SmartDashboard.putNumber("B- Speed", starterSpeed);
-    SmartDashboard.putBoolean("B- Adding Speed", addSpeed);
+    //SmartDashboard.putBoolean("B- Adding Speed", addSpeed);
     SmartDashboard.putBoolean("B- Passed Center", centerPassed);
     //m_Drive.tankDrive(leftSpeed, rightSpeed);
     m_rightFrontMotor.set(rightSpeed);
@@ -160,6 +160,7 @@ public class tankDrive extends SubsystemBase {
   }
 
   public void autoChargeStation() {
+    //SmartDashboard.putData(leftMotors);
         if (!logic2) {
           distance = frEncoder.getPosition() * inPerEncoder; //in inches
         } else {
@@ -167,13 +168,14 @@ public class tankDrive extends SubsystemBase {
         }
         
         if (Math.abs(distance) < autoChargeInches) {
-          System.out.println("Running");
+          //System.out.println("Running");
             straight(-0.1);
       
         } else {
           logic2 = true;
             balance(Robot.pitch);
-            System.out.println("Balance");
+            //System.out.println("Balance");
         }
+        
   }
 }

@@ -34,6 +34,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import frc.robot.subsystems.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -66,6 +67,7 @@ public class Robot extends TimedRobot {
   // Arm arm = new Arm();
   //Command midConeAuo = new midConeAuto(arm);
   SendableChooser<Command> m_chooser = new SendableChooser<>();
+  Command Charge = new Charge();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -80,37 +82,42 @@ public class Robot extends TimedRobot {
     m_visionThread =
     new Thread(
       () -> {
-        // Get the UsbCamera from CameraServer
-        UsbCamera camera = CameraServer.startAutomaticCapture();
-        // Set the resolution
+        UsbCamera camera = CameraServer.startAutomaticCapture(0);
         camera.setResolution(160, 240);
-
-        // Get a CvSink. This will capture Mats from the camera
         CvSink cvSink = CameraServer.getVideo();
-        // Setup a CvSource. This will send images back to the Dashboard
         CvSource outputStream = CameraServer.putVideo("Rectangle", 160, 240);
-
-        // Mats are very memory expensive. Lets reuse this Mat.
+        /*
         Mat mat = new Mat();
-
-        // This cannot be 'true'. The program will never exit if it is. This
-        // lets the robot stop this thread when restarting robot code or
-        // deploying.
         while (!Thread.interrupted()) {
-          // Tell the CvSink to grab a frame from the camera and put it
-          // in the source mat.  If there is an error notify the output.
           if (cvSink.grabFrame(mat) == 0) {
-            // Send the output the error.
             outputStream.notifyError(cvSink.getError());
-            // skip the rest of the current iteration
             continue;
           }
-          // Put a rectangle on the image
-          Imgproc.rectangle(
-              mat, new Point(250, 200), new Point(350, 300), new Scalar(255, 255, 255), 5);
-          // Give the output stream a new image to display
+          Imgproc.rectangle(mat, new Point(75, 115), new Point(85, 125), new Scalar(255, 255, 255), 2);
           outputStream.putFrame(mat);
-        }
+        } */
+      });
+    m_visionThread.setDaemon(true);
+    m_visionThread.start();
+
+
+    m_visionThread =
+    new Thread(
+      () -> {
+        UsbCamera camera = CameraServer.startAutomaticCapture(1);
+        camera.setResolution(160, 240);
+        CvSink cvSink = CameraServer.getVideo();
+        CvSource outputStream = CameraServer.putVideo("Rectangle", 160, 240);
+        /*
+        Mat mat = new Mat();
+        while (!Thread.interrupted()) {
+          if (cvSink.grabFrame(mat) == 0) {
+            outputStream.notifyError(cvSink.getError());
+            continue;
+          }
+          Imgproc.rectangle(mat, new Point(75, 115), new Point(85, 125), new Scalar(255, 255, 255), 2);
+          outputStream.putFrame(mat);
+        } */
       });
     m_visionThread.setDaemon(true);
     m_visionThread.start();
@@ -134,6 +141,15 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     
     CommandScheduler.getInstance().run();
+    SmartDashboard.putNumber("Elbow Temperature", Arm.elbowMotor.getMotorTemperature());
+    SmartDashboard.putNumber("Arm Position", Arm.armEncoder.getPosition());
+    SmartDashboard.putNumber("Elbow Position", Arm.elbowEncoder.getPosition());
+
+    Hand.motorSpeed = SmartDashboard.getNumber("Motor speed", 0.5);
+    SmartDashboard.putNumber("Hand Temperature", HandMotor.getMotorTemperature());
+    SmartDashboard.putBoolean("Sensor", !robotContainer.PhotoSwitch.get());
+    SmartDashboard.putNumber("Hand Position", HandMotor.getEncoder().getPosition()); 
+
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -150,14 +166,16 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    
+    tankDrive.frEncoder.setPosition(0);    
     
   
 
     // if (m_autonomousCommand != null) {
     //   m_autonomousCommand.cancel();
     // }
-    CommandScheduler.getInstance().schedule(robotContainer.midConeAuto);
+    CommandScheduler.getInstance().schedule(robotContainer.highCubeAuto.andThen(robotContainer.Charge.repeatedly()));
+    //CommandScheduler.getInstance().schedule(robotContainer.Charge.repeatedly());
+    //CommandScheduler.getInstance().schedule(Charge.repeatedly());
   }
 
   /** This function is called periodically during autonomous. */
@@ -184,7 +202,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putBoolean("Left Bumper", operator.getLeftBumper());
+    //SmartDashboard.putBoolean("Left Bumper", operator.getLeftBumper());
     // if(!activated)  detect = !robotContainer.photoSwitch.get();
     // SmartDashboard.putBoolean("Detect", detect);
     // SmartDashboard.putNumber("First", first);
