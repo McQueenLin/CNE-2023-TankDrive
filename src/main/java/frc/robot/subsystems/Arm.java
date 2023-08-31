@@ -25,7 +25,7 @@ public class Arm extends SubsystemBase {
     private RelativeEncoder elbowEncoder;
     private RelativeEncoder armEncoder;
 
-    Position currentPosition = Position.REST;
+    Position currentPosition = Position.START;
 
     boolean PID = true;
 
@@ -34,12 +34,14 @@ public class Arm extends SubsystemBase {
     public static boolean resting = false;
 
     enum Position {
-        FLOOR(0, -85),
-        CUBE(-78, -55), //high cube
-        CONE(-33, -18), //mid prep BUT NOT FOR CHUTE, PLEASE MAKE SAME
-        DUNK(-37, -41),
-        REST(0, 0);
-
+        FLOOR(4, -90),
+        CUBE(-75, 54),
+        CONE(-33, -18), 
+        //DUNK(-90, 70),
+        REST(4, 3),
+        START(0, 0);
+        //UNDUNK(armChange, elbowChange);
+        
         public double arm;
         public double elbow;
         Position(double arm, double elbow) {
@@ -47,6 +49,7 @@ public class Arm extends SubsystemBase {
             this.elbow = elbow;
         }
     }
+    
 
 
 
@@ -108,12 +111,6 @@ public class Arm extends SubsystemBase {
 
     }
 
-    public Command dunk(){
-        return runOnce( () -> {
-            resting = false;
-            setPosition(Position.DUNK);
-        });
-    }
 
     public Command cube() {
         return runOnce( () -> {
@@ -163,31 +160,24 @@ public class Arm extends SubsystemBase {
             double elbow = operatorController.getRightY();
             double arm = operatorController.getLeftY();
 
-            //System.out.println(Math.abs(arm));
-
-            if(Math.abs(elbow) > 0.05){
-                PID = false;
-            }else{
-                PID = true;
+            //ELBOW, CANNOT USE POSIITONS...ELBOW BEAUSE NOT CONSTANT
+            if (currentPosition.elbow >=  0) { //beyond resting limit, one way 
+                if(elbow > 0.05) currentPosition.elbow = currentPosition.elbow - elbow;
+            } else if (currentPosition.elbow <= -90) { //beyond floor limit, one way 
+                if(elbow < -0.05) currentPosition.elbow = currentPosition.elbow - elbow;
+            } else {
+                if(Math.abs(elbow) > 0.05) currentPosition.elbow = currentPosition.elbow - elbow;
             }
 
-            if(Math.abs(arm) > 0.05){
-                PID = false;
-            }else{
-                PID = true;
+            //ARM
+            if (currentPosition.arm >=  0) { //beyond resting limit, one way 
+                if(arm < -0.05) currentPosition.arm = currentPosition.arm + arm;
+            } else if (currentPosition.arm <= -75) { //beyond tall limit, one way 
+                if(arm > 0.05) currentPosition.arm = currentPosition.arm + arm;
+            } else {
+                if(Math.abs(arm) > 0.05) currentPosition.arm = currentPosition.arm + arm; 
             }
-
-            if(Math.abs(arm) > 0.05){
-                //SmartDashboard.putNumber("arm", arm);
-                //currentPositionHoldArm = currentPositionHoldArm + arm;
-                currentPosition.arm = currentPosition.arm + arm;
-            }
-
-            if(Math.abs(elbow) > 0.05){
-                //SmartDashboard.putNumber("elbow", elbow);
-                //currentPositionHoldElbow =  currentPositionHoldElbow - elbow;
-                currentPosition.elbow = currentPosition.elbow - elbow;
-            }
+            
         }).andThen(moveArm()); //}).andThen(moveArm())
 
 
