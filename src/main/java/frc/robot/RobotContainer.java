@@ -5,6 +5,8 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.auto.Charge;
+import frc.robot.auto.midConeAuto;
 import frc.robot.commands.teleopDrive;
 import frc.robot.subsystems.tankDrive;
 import edu.wpi.first.wpilibj.XboxController;
@@ -16,7 +18,9 @@ import frc.robot.subsystems.tankDrive;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -43,6 +47,11 @@ public class RobotContainer {
   public static final CANSparkMax armMotor = new CANSparkMax(24,CANSparkMaxLowLevel.MotorType.kBrushless);
   public static final CANSparkMax elbowMotor = new CANSparkMax(41,CANSparkMaxLowLevel.MotorType.kBrushless);
   //public static final DigitalInput input = new DigitalInput(0);
+
+  public static final CANSparkMax leftFrontMotor = new CANSparkMax(Constants.tankDriveConstants.leftFrontDeviceID, MotorType.kBrushless);
+  public static final CANSparkMax rightFrontMotor = new CANSparkMax(Constants.tankDriveConstants.rightFrontDeviceID, MotorType.kBrushless);
+  public static final CANSparkMax leftRearMotor = new CANSparkMax(Constants.tankDriveConstants.leftBackDeviceID, MotorType.kBrushless);
+  public static final CANSparkMax rightRearMotor = new CANSparkMax(Constants.tankDriveConstants.rightBackDeviceID, MotorType.kBrushless);
   
   public static final CANSparkMax handMotor = new CANSparkMax(23, CANSparkMaxLowLevel.MotorType.kBrushless);
   
@@ -80,6 +89,7 @@ public class RobotContainer {
   {
 
       // System.out.println("Bind");
+
 
       Arm.getInstance().setDefaultCommand(Arm.getInstance().changePos());
       Hand.getInstance().setDefaultCommand(Hand.getInstance().autoClose().repeatedly().unless(() -> operatorController.getLeftBumper()));

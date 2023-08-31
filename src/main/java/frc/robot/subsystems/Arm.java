@@ -9,6 +9,9 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.RobotContainer;
 import static frc.robot.RobotContainer.*;
+import frc.robot.auto.Charge;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 public class Arm extends SubsystemBase {
 
@@ -31,16 +34,19 @@ public class Arm extends SubsystemBase {
     double currentPositionHoldArm;
     double currentPositionHoldElbow;
     public static boolean resting = false;
+
+    static double armChange;
+    static double elbowChange;
     
     double target;
 
     enum Position {
-        FLOOR(0, -85),
-        CUBE(-78, -55), //high cube
-        CONE(-33, -18), //mid prep BUT NOT FOR CHUTE, PLEASE MAKE SAME
-        DUNK(-37, -41),
-        REST(0, 0);
-
+        FLOOR(0, -90),
+        CUBE(-75, 54),
+        CONE(-33, -18),
+        //DUNK(-90, 70),
+        REST(0, 0),
+        UNDUNK(armChange, elbowChange);
         public double arm;
         public double elbow;
         Position(double arm, double elbow) {
@@ -77,7 +83,7 @@ public class Arm extends SubsystemBase {
      * is private since this class is a Singleton. Code should use
      * the {@link #getInstance()} method to get the singleton instance.
      */
-    private Arm() {
+    public Arm() {
         this.elbowEncoder = elbowMotor.getEncoder();
 //        this.elbowEncoder.setPosition(0);
         this.armEncoder = armMotor.getEncoder();
@@ -107,8 +113,8 @@ public class Arm extends SubsystemBase {
         armEncoder.setPosition(0);
         elbowEncoder.setPosition(0);
 
-        elbowMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        armMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        elbowMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        armMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
     }
 
@@ -217,34 +223,41 @@ public class Arm extends SubsystemBase {
 */
 
     public Command dunk(){
-        target = currentPosition.elbow + 20;
-        double elbow = -0.1;
+        target = currentPosition.elbow - 50;
+        this.elbowChange = currentPosition.elbow;
+        double elbow = 0.1;
+        SmartDashboard.putNumber("Elbow change", elbowChange);
         return runOnce(() -> {
             while(true){
-                if(Math.abs(elbow) > 0.05 && currentPosition.elbow < target){
+                SmartDashboard.putBoolean("dunk", Math.abs(elbow) > 0.05 && currentPosition.elbow < target);
+                if(currentPosition.elbow > target){
                     //SmartDashboard.putNumber("elbow", elbow);
                     //currentPositionHoldElbow =  currentPositionHoldElbow - elbow;
                     currentPosition.elbow = currentPosition.elbow - elbow;
+                    elbowPID.setReference(currentPosition.elbow, CANSparkMax.ControlType.kPosition);             
                 }
-                else if (currentPosition.elbow > target){
+                else if (currentPosition.elbow < target){
                     // currentPosition.elbow = currentPosition.elbow;
                     break;
                 }
             }
-        }).andThen(moveArm()); 
-    }
-
-    public Command midConeAuto(){
-        return runOnce(() -> {
-            Hand.hold = true;
-            Arm.getInstance().cone().alongWith(Hand.getInstance().Holding()).andThen(Arm.getInstance().dunk().alongWith(Hand.getInstance().Holding()).andThen(Hand.getInstance().Opening().andThen(Arm.getInstance().rest())));
-            Hand.hold = false;
         });
     }
 
+    public Command undunk(){
+        return runOnce(() -> {
+            elbowPID.setReference(elbowChange, CANSparkMax.ControlType.kPosition);
+        });
+    }
+
+
+    public Charge charge = new Charge();
+
+
     @Override
     public void periodic() {
-
+       
+        SmartDashboard.putNumber("target", currentPositionHoldArm);
         SmartDashboard.putNumber("Elbow Temperature", elbowMotor.getMotorTemperature());
         SmartDashboard.putNumber("arm", armEncoder.getPosition());
         SmartDashboard.putNumber("P integral", elbowPID.getP());

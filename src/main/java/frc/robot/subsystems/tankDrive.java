@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import com.revrobotics.RelativeEncoder;
+import frc.robot.Robot;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -30,10 +31,10 @@ import frc.robot.RobotContainer;
 public class tankDrive extends SubsystemBase {
 
 
-  public CANSparkMax m_leftFrontMotor = new CANSparkMax(Constants.tankDriveConstants.leftFrontDeviceID, MotorType.kBrushless);
-  public CANSparkMax m_leftBackMotor = new CANSparkMax(Constants.tankDriveConstants.leftBackDeviceID, MotorType.kBrushless);
-  public static CANSparkMax m_rightFrontMotor = new CANSparkMax(Constants.tankDriveConstants.rightFrontDeviceID, MotorType.kBrushless);
-  public CANSparkMax m_rightBackMotor = new CANSparkMax(Constants.tankDriveConstants.rightBackDeviceID, MotorType.kBrushless);
+  public CANSparkMax m_leftFrontMotor = RobotContainer.leftFrontMotor;
+  public CANSparkMax m_leftBackMotor = RobotContainer.leftRearMotor;
+  public static CANSparkMax m_rightFrontMotor = RobotContainer.rightFrontMotor;
+  public CANSparkMax m_rightBackMotor = RobotContainer.rightRearMotor;
   
   
   MotorControllerGroup leftMotors = new MotorControllerGroup(m_leftBackMotor, m_leftFrontMotor);
@@ -47,6 +48,12 @@ public class tankDrive extends SubsystemBase {
   private double prevVal;
   private boolean addSpeed = false;
   private double speedLimit = 0.07;
+  public static RelativeEncoder frEncoder = RobotContainer.rightFrontMotor.getEncoder();
+  private double autoChargeInches = 68; //Community 54", ramp 14", cStation top 76"
+  private double inPerEncoder = 2.289; // 19 inches per 8.3 encoder value, one wheel rotation
+  private double distance = 0;
+  private boolean logic2 = false;
+ 
   
 
   /** Creates a new ExampleSubsystem. */
@@ -69,7 +76,15 @@ public class tankDrive extends SubsystemBase {
   }
 
   public void straight(double speed) {
-      tankDrive(speed, speed);
+    // straight(starterSpeed); 
+    //   if (starterSpeed < speedLimit) { // if wheels have not moved, increase speed
+    //     starterSpeed += 0.0002;
+    //     addSpeed = true;
+        
+    //   } else {
+    //     addSpeed = false;
+    //   }
+    tankDrive(speed, speed);
   }
 
   public void brake(boolean activate) {
@@ -142,5 +157,23 @@ public class tankDrive extends SubsystemBase {
       addSpeed = false;
       centerPassed = true;
     }
+  }
+
+  public void autoChargeStation() {
+        if (!logic2) {
+          distance = frEncoder.getPosition() * inPerEncoder; //in inches
+        } else {
+          distance = autoChargeInches + 1; //to stop distance tracking
+        }
+        
+        if (Math.abs(distance) < autoChargeInches) {
+          System.out.println("Running");
+            straight(-0.1);
+      
+        } else {
+          logic2 = true;
+            balance(Robot.pitch);
+            System.out.println("Balance");
+        }
   }
 }

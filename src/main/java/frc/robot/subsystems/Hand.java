@@ -130,6 +130,12 @@ public class Hand extends SubsystemBase{
         });
     }
 
+    public Command setFalse(){
+        return runOnce(() -> {
+            hold = false;
+        });
+    }
+
     public Command autoClose(){
         return runOnce(() -> {
             if(!photoSwitch.get()){
