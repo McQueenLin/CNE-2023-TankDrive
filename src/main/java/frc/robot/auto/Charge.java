@@ -8,21 +8,33 @@ import frc.robot.Robot;
 import frc.robot.subsystems.*;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.tankDrive;
+import com.revrobotics.RelativeEncoder;
 
 
 public class Charge extends CommandBase {
+   
 
+    //private final tankDrive tankDrive;
     tankDrive tankDrive = new tankDrive();
+    
 
     public Charge() {
-        addRequirements(tankDrive);
+        //this.tankDrive = tankDrive;
+        //addRequirements(tankDrive);
+    }
+
+    @Override
+    public void initialize() {
+        
     }
 
     @Override
     public void execute() {
-        tankDrive.autoChargeStation(); 
-        
+        tankDrive.autoChargeStation();
+
     }
+        
+    
 
     @Override
     public boolean isFinished() {
@@ -34,4 +46,5 @@ public class Charge extends CommandBase {
     public void end(boolean interrupted) {
 
     }
+
 }

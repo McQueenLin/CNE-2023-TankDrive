@@ -39,7 +39,7 @@ public class tankDrive extends SubsystemBase {
   
   MotorControllerGroup leftMotors = new MotorControllerGroup(m_leftBackMotor, m_leftFrontMotor);
   MotorControllerGroup rightMotors = new MotorControllerGroup(m_rightBackMotor, m_rightFrontMotor);
-  public static RelativeEncoder frEncoder = m_rightFrontMotor.getEncoder();
+  
   
   //m_Drive = new DifferentialDrive(leftMotors, rightMotors);
   public boolean centerPassed = false;
@@ -48,9 +48,12 @@ public class tankDrive extends SubsystemBase {
   private double prevVal;
   private boolean addSpeed = false;
   private double speedLimit = 0.07;
+  public static RelativeEncoder frEncoder = RobotContainer.rightFrontMotor.getEncoder();
   private double autoChargeInches = 68; //Community 54", ramp 14", cStation top 76"
   private double inPerEncoder = 2.289; // 19 inches per 8.3 encoder value, one wheel rotation
   private double distance = 0;
+  private boolean logic2 = false;
+ 
   
 
   /** Creates a new ExampleSubsystem. */
@@ -73,7 +76,15 @@ public class tankDrive extends SubsystemBase {
   }
 
   public void straight(double speed) {
-      tankDrive(speed, speed);
+    // straight(starterSpeed); 
+    //   if (starterSpeed < speedLimit) { // if wheels have not moved, increase speed
+    //     starterSpeed += 0.0002;
+    //     addSpeed = true;
+        
+    //   } else {
+    //     addSpeed = false;
+    //   }
+    tankDrive(speed, speed);
   }
 
   public void brake(boolean activate) {
@@ -101,7 +112,18 @@ public class tankDrive extends SubsystemBase {
 
   public void stop() {
       tankDrive(0, 0);
-      System.out.println("DPAD UP");
+      //System.out.println("DPAD UP");
+  }
+
+  public void test() {
+    straight(starterSpeed); 
+      if (starterSpeed < speedLimit) { // if wheels have not moved, increase speed
+        starterSpeed += 0.0002;
+        addSpeed = true;
+        
+      } else {
+        addSpeed = false;
+      }
   }
 
   public void balance(double pitch) {
@@ -149,13 +171,20 @@ public class tankDrive extends SubsystemBase {
   }
 
   public void autoChargeStation() {
-    distance = frEncoder.getPosition() * inPerEncoder; //in inches
-    if (Math.abs(distance) < autoChargeInches) {
-      straight(-0.1);
+        if (!logic2) {
+          distance = frEncoder.getPosition() * inPerEncoder; //in inches
+        } else {
+          distance = autoChargeInches + 1; //to stop distance tracking
+        }
+        
+        if (Math.abs(distance) < autoChargeInches) {
+          System.out.println("Running");
+            straight(-0.1);
       
-    } else {
-      balance(Robot.pitch);
-    }
-
+        } else {
+          logic2 = true;
+            balance(Robot.pitch);
+            System.out.println("Balance");
+        }
   }
 }

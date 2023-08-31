@@ -75,9 +75,6 @@ public class RobotContainer {
   // public RelativeEncoder frEncoder = tank_Drive.m_rightFrontMotor.getEncoder();
 
   public teleopDrive tDrive = new teleopDrive(tank_Drive, driverController);
-
-  public Arm armSubsystem = new Arm();
-  public midConeAuto midConeAuto = new midConeAuto(armSubsystem);
   
   public RobotContainer(){
         // Configure the trigger bindings

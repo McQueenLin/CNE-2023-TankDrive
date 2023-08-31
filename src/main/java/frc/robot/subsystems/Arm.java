@@ -33,16 +33,19 @@ public class Arm extends SubsystemBase {
 
     double currentPositionHoldArm;
     double currentPositionHoldElbow;
+
+    static double armChange;
+    static double elbowChange;
     
     double target;
 
     enum Position {
         FLOOR(0, -90),
-        CUBE(-87, 69),
-        CONE(-88, -82),
-        DUNK(-90, 70),
-        REST(0, 0);
-
+        CUBE(-75, 54),
+        CONE(-33, -18),
+        //DUNK(-90, 70),
+        REST(0, 0),
+        UNDUNK(armChange, elbowChange);
         public double arm;
         public double elbow;
         Position(double arm, double elbow) {
@@ -109,8 +112,8 @@ public class Arm extends SubsystemBase {
         armEncoder.setPosition(0);
         elbowEncoder.setPosition(0);
 
-        elbowMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        armMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        elbowMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        armMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
     }
 
@@ -213,29 +216,41 @@ public class Arm extends SubsystemBase {
 */
 
     public Command dunk(){
-        target = currentPosition.elbow + 20;
-        double elbow = -0.1;
+        target = currentPosition.elbow - 50;
+        this.elbowChange = currentPosition.elbow;
+        double elbow = 0.1;
+        SmartDashboard.putNumber("Elbow change", elbowChange);
         return runOnce(() -> {
             while(true){
-                if(Math.abs(elbow) > 0.05 && currentPosition.elbow < target){
+                SmartDashboard.putBoolean("dunk", Math.abs(elbow) > 0.05 && currentPosition.elbow < target);
+                if(currentPosition.elbow > target){
                     //SmartDashboard.putNumber("elbow", elbow);
                     //currentPositionHoldElbow =  currentPositionHoldElbow - elbow;
                     currentPosition.elbow = currentPosition.elbow - elbow;
+                    elbowPID.setReference(currentPosition.elbow, CANSparkMax.ControlType.kPosition);             
                 }
-                else if (currentPosition.elbow > target){
+                else if (currentPosition.elbow < target){
                     // currentPosition.elbow = currentPosition.elbow;
                     break;
                 }
             }
-        }).andThen(moveArm()); 
+        });
     }
+
+    public Command undunk(){
+        return runOnce(() -> {
+            elbowPID.setReference(elbowChange, CANSparkMax.ControlType.kPosition);
+        });
+    }
+
 
     public Charge charge = new Charge();
 
 
     @Override
     public void periodic() {
-
+       
+        SmartDashboard.putNumber("target", currentPositionHoldArm);
         SmartDashboard.putNumber("Elbow Temperature", elbowMotor.getMotorTemperature());
         SmartDashboard.putNumber("arm", armEncoder.getPosition());
         SmartDashboard.putNumber("P integral", elbowPID.getP());

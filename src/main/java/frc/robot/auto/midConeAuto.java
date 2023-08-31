@@ -18,7 +18,7 @@ public class midConeAuto extends CommandBase{
     @Override
     public void execute() {
         Hand.hold = true;
-        arm.cone().alongWith(Hand.getInstance().Holding()).andThen(arm.dunk().alongWith(Hand.getInstance().Holding()).andThen(Hand.getInstance().Opening().andThen(arm.rest()).andThen(arm.charge)));
+        Arm.getInstance().cone().andThen(Arm.getInstance().dunk()).andThen(Arm.getInstance().rest()).andThen(Arm.getInstance().charge);
         Hand.hold = false;
         finished = true;
 

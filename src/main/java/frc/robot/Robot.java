@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.tankDrive;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.OperatorConstants;
@@ -64,13 +66,12 @@ public class Robot extends TimedRobot {
   public XboxController operator = RobotContainer.operatorController;
 
   public CANSparkMax HandMotor = RobotContainer.handMotor;
-<<<<<<< Updated upstream
-=======
   Thread m_visionThread;
 
   SendableChooser<Command> m_chooser = new SendableChooser<>();
-  Command charge = new Charge();
->>>>>>> Stashed changes
+  Command Charge = new Charge();
+
+  SequentialCommandGroup midConeAuto;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -81,6 +82,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
     robotContainer.navX.resetGyro();
+    tankDrive.frEncoder.setPosition(0);
     
   }
 
@@ -116,18 +118,24 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    // m_autonomousCommand = getAutonomousCommand();
-    
+    Hand.getInstance().hold = true;
+    // midConeAuto = Arm.getInstance().cube().andThen(new WaitCommand(1)).andThen(Arm.getInstance().dunk()).andThen(
+     //  new WaitCommand(1)).andThen(Arm.getInstance().undunk()).andThen(new WaitCommand(2)).andThen
+     //  (Arm.getInstance().rest()).andThen(Hand.getInstance().setFalse().andThen(Charge.repeatedly()));
+        
+    //midConeAuto.schedule();
+
     // if (m_autonomousCommand != null) {
     //   m_autonomousCommand.cancel();
     // }
-    CommandScheduler.getInstance().schedule(robotContainer.midConeAuto);
+    //CommandScheduler.getInstance().schedule(Charge.repeatedly());
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    //CommandScheduler.getInstance().run()
+    //Hand.getInstance().Holding();
+    
     //SendableChooser
     
   }
