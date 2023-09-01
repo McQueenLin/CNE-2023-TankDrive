@@ -48,7 +48,7 @@ public class Arm extends SubsystemBase {
         CUBE(-78, 0),
         CUBEDUNK(-78, -65),
         CONE(-48, 0),
-        CONEDUNK(-40, -60),
+        CONEDUNK(-32, -55),
         REST(4, 2),
         START(0, 0),
         CHUTE(0, -55),
