@@ -58,7 +58,9 @@ public class Robot extends TimedRobot {
   public final String midCubeAuto = "midCubeAuto";
   public final String highCubeAuto = "highCubeAuto";
   String autoSelected;
+  Boolean autoCharging;
   SendableChooser<String> auto = new SendableChooser<>();
+  SendableChooser<Boolean> autoCharge = new SendableChooser<>();
   
   
   public static int first = 0;
@@ -86,6 +88,10 @@ public class Robot extends TimedRobot {
     auto.addOption("Mid Cube Auto", midCubeAuto);
     auto.addOption("Mid Cone Auto", midConeAuto);
     SmartDashboard.putData("Auto choices", auto);
+
+    autoCharge.setDefaultOption("Charge", true);
+    autoCharge.addOption("Taxi", false);
+    SmartDashboard.putData("Charge Or BackUp", autoCharge);
     robotContainer = new RobotContainer();
     robotContainer.navX.resetGyro();
     m_visionThread =
@@ -178,18 +184,28 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     autoSelected = auto.getSelected();
+    autoCharging = autoCharge.getSelected();
     tankDrive.frEncoder.setPosition(0);    
+
+    if (autoCharging) {
+      tankDrive.autoChargeInches = 72;
+
+    } else {
+      tankDrive.autoChargeInches = 80;
+    }
     
-  switch(autoSelected){
-    case midConeAuto:
-      CommandScheduler.getInstance().schedule(robotContainer.midConeAuto.andThen(robotContainer.Charge.repeatedly()));
-      break;
-    case midCubeAuto:
-      CommandScheduler.getInstance().schedule(robotContainer.midCubeAuto.andThen(robotContainer.Charge.repeatedly()));
-      break;
-    default:
-      CommandScheduler.getInstance().schedule(robotContainer.highCubeAuto.andThen(robotContainer.Charge.repeatedly()));
-  }
+    switch(autoSelected){
+      case midConeAuto:
+        CommandScheduler.getInstance().schedule(robotContainer.midConeAuto.andThen(robotContainer.Charge.repeatedly()));
+        break;
+      case midCubeAuto:
+        CommandScheduler.getInstance().schedule(robotContainer.midCubeAuto.andThen(robotContainer.Charge.repeatedly()));
+        break;
+      default:
+        CommandScheduler.getInstance().schedule(robotContainer.highCubeAuto.andThen(robotContainer.Charge.repeatedly()));
+
+    //CommandScheduler.getInstance().schedule(robotContainer.midConeAuto.andThen(robotContainer.Charge.repeatedly()));
+    }
 
     // if (m_autonomousCommand != null) {
     //   m_autonomousCommand.cancel();
@@ -223,48 +239,8 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    //SmartDashboard.putBoolean("Left Bumper", operator.getLeftBumper());
-    // if(!activated)  detect = !robotContainer.photoSwitch.get();
-    // SmartDashboard.putBoolean("Detect", detect);
-    // SmartDashboard.putNumber("First", first);
-    // SmartDashboard.putBoolean("Close", activated);
     CommandScheduler.getInstance().schedule(robotContainer.tDrive);
-     // SmartDashboard.putBoolean("Robot.Detect", Robot.detect);
-    // if (detect && !activated)// && !driverController.getLeftBumper()) 
-    // {
-    //   first ++;
-      
-    //   if (first < 5) 
-    //   {
-        
-    //     HandMotor.set(0.3);
-    //   } 
-    //   else 
-    //   {
-    //     HandMotor.set(0.1);
-    //     if(first > 200)
-    //     {
-    //       OpenCounter=0;
-    //       first = 0;
-    //       detect = false;
-    //       activated = true;
-    //     }
-    //   }
-      
-    // }
-    // else
-    // {
-    //   OpenCounter ++;
-    //   HandMotor.set(-0.05);
-    //   if(OpenCounter > 500) 
-    //   {
-    //     activated = false;
-    //     OpenCounter = 0;
-    //   }
-    // }
-    
-    //handMotor.set(controller.getLeftY());
-    
+  
   }
 
   @Override

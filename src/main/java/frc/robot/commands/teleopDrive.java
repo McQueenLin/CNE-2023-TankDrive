@@ -25,7 +25,7 @@ public class teleopDrive extends CommandBase {
   private final tankDrive m_Drive;
   public XboxController m_Controller;
   
-  private double speedReductionConstant = 0.4;
+  private double speedReductionConstant = 0.5;
   private double timer = 0;
   private boolean backToNormal = false;
   
@@ -69,11 +69,11 @@ public class teleopDrive extends CommandBase {
      
     if(Arm.resting) {
       if (backToNormal) {
-        speedReductionConstant = 0.4;
+        speedReductionConstant = 0.5;
         backToNormal = false;
       }
       if (m_Controller.getYButton() && timer >= 10) {
-        speedReductionConstant = (speedReductionConstant == 0.7 ? 0.4:0.7);
+        speedReductionConstant = (speedReductionConstant == 0.7 ? 0.5:0.9);
         timer = 0;
         //this.frEncoder.setPosition(0);        
       }

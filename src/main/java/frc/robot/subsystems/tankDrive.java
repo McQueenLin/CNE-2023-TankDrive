@@ -49,7 +49,7 @@ public class tankDrive extends SubsystemBase {
   private boolean addSpeed = false;
   private double speedLimit = 0.07;
   public static RelativeEncoder frEncoder = RobotContainer.rightFrontMotor.getEncoder();
-  private double autoChargeInches = 68; //Community 54", ramp 14", cStation top 76"
+  public static double autoChargeInches = 72; //Community 54", ramp 14", cStation top 76"
   private double inPerEncoder = 2.289; // 19 inches per 8.3 encoder value, one wheel rotation
   public static double distance = 0;
   private boolean logic2 = false;

@@ -199,14 +199,14 @@ public class Arm extends SubsystemBase {
 
             //System.out.println(Math.abs(arm))}
 
-            
+            /*
             //ELBOW, CANNOT USE POSIITONS...ELBOW BEAUSE NOT CONSTANT
             if (currentPosition.elbow >=  0) { //beyond resting limit, one way 
                 if(elbow > 0.05) currentPosition.elbow = currentPosition.elbow - elbow;
             } else if (currentPosition.elbow <= -90) { //beyond floor limit, one way 
                 if(elbow < -0.05) currentPosition.elbow = currentPosition.elbow - elbow;
             } else {
-                if(Math.abs(elbow) > 0.05) currentPosition.elbow = currentPosition.elbow - elbow;
+               
             }
     
             //ARM
@@ -215,8 +215,14 @@ public class Arm extends SubsystemBase {
             } else if (currentPosition.arm <= -75) { //beyond tall limit, one way 
                 if(arm > 0.05) currentPosition.arm = currentPosition.arm + arm;
             } else {
-                if(Math.abs(arm) > 0.05) currentPosition.arm = currentPosition.arm + arm; 
-            }        }).andThen(moveArm()); //}).andThen(moveArm())
+                
+            }  
+            */
+            if(Math.abs(arm) > 0.05) currentPosition.arm = currentPosition.arm + arm; 
+            if(Math.abs(elbow) > 0.05) currentPosition.elbow = currentPosition.elbow - elbow;
+        
+        
+        }).andThen(moveArm()); //}).andThen(moveArm())
 
 
     }
