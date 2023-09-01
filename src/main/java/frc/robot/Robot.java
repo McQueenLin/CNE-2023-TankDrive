@@ -82,11 +82,11 @@ public class Robot extends TimedRobot {
     m_visionThread =
     new Thread(
       () -> {
-        UsbCamera camera = CameraServer.startAutomaticCapture(0);
+        UsbCamera camera = CameraServer.startAutomaticCapture();
         camera.setResolution(160, 240);
         CvSink cvSink = CameraServer.getVideo();
         CvSource outputStream = CameraServer.putVideo("Rectangle", 160, 240);
-        /*
+        
         Mat mat = new Mat();
         while (!Thread.interrupted()) {
           if (cvSink.grabFrame(mat) == 0) {
@@ -95,7 +95,7 @@ public class Robot extends TimedRobot {
           }
           Imgproc.rectangle(mat, new Point(75, 115), new Point(85, 125), new Scalar(255, 255, 255), 2);
           outputStream.putFrame(mat);
-        } */
+        } 
       });
     m_visionThread.setDaemon(true);
     m_visionThread.start();
@@ -175,7 +175,7 @@ public class Robot extends TimedRobot {
     // if (m_autonomousCommand != null) {
     //   m_autonomousCommand.cancel();
     // }
-    CommandScheduler.getInstance().schedule(robotContainer.highCubeAuto.andThen(robotContainer.Charge.repeatedly()));
+    CommandScheduler.getInstance().schedule(robotContainer.midConeAuto.andThen(robotContainer.Charge.repeatedly()));
     //CommandScheduler.getInstance().schedule(robotContainer.Charge.repeatedly());
     //CommandScheduler.getInstance().schedule(Charge.repeatedly());
   }

@@ -29,7 +29,7 @@ public class teleopDrive extends CommandBase {
   private double timer = 0;
   private boolean backToNormal = false;
   
-  private double adjSpeed = 0.05;
+  private double adjSpeed = 0.065;
   
   
 
