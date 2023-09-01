@@ -46,12 +46,12 @@ public class Arm extends SubsystemBase {
     enum Position {
         FLOOR(4, -90),
         CUBE(-78, 0),
-        CUBEDUNK(-78, -60),
-        CONE(-28, 0),
-        CONEDUNK(-28, -30),
+        CUBEDUNK(-78, -65),
+        CONE(-48, 0),
+        CONEDUNK(-32, -55),
         REST(4, 2),
         START(0, 0),
-        CHUTE(0, -35),
+        CHUTE(0, -55),
         UNDUNK(armChange, elbowChange);
         public double arm;
         public double elbow;
@@ -114,7 +114,7 @@ public class Arm extends SubsystemBase {
         armPID.setFF(0.1);
 
         elbowPID.setOutputRange(-0.5,0.5);
-        armPID.setOutputRange(-0.7,0.7);
+        armPID.setOutputRange(-0.5,0.5);
 
 
 

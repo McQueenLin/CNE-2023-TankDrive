@@ -92,7 +92,7 @@ public class RobotContainer {
   public static final DigitalInput PhotoSwitch = new DigitalInput(0);
   //public RepeatCommand charge = Charge.repeatedly();
 
-  public SequentialCommandGroup midConeAuto = hand.setSensorOn().andThen(new ParallelCommandGroup(arm.cone(), hand.autoClose())).andThen(new WaitCommand(1)).andThen(new ParallelCommandGroup(arm.coneDunk(),hand.autoClose()))
+  public SequentialCommandGroup midConeAuto = hand.setSensorOn().andThen(new ParallelCommandGroup(arm.cone(), hand.autoClose())).andThen(new WaitCommand(1.5)).andThen(new ParallelCommandGroup(arm.coneDunk(),hand.autoClose()))
   .andThen(new WaitCommand(1)).andThen(hand.Opening()).andThen(new WaitCommand(0.5)).andThen(arm.cone()).andThen(new WaitCommand(1))
   .andThen(arm.rest()).andThen(hand.setFalse()).andThen(hand.setSensorOff());
 
