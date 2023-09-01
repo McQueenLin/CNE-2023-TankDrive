@@ -96,6 +96,10 @@ public class RobotContainer {
   .andThen(new WaitCommand(1)).andThen(hand.Opening()).andThen(new WaitCommand(0.5)).andThen(arm.cone()).andThen(new WaitCommand(1))
   .andThen(arm.rest()).andThen(hand.setFalse()).andThen(hand.setSensorOff());
 
+  public SequentialCommandGroup midCubeAuto = hand.setSensorOn().andThen(new ParallelCommandGroup(arm.cone(), hand.autoClose())).andThen(new WaitCommand(1)).andThen(new ParallelCommandGroup(arm.coneDunk(),hand.autoClose()))
+  .andThen(new WaitCommand(1)).andThen(hand.Opening()).andThen(new WaitCommand(0.5)).andThen(arm.cone()).andThen(new WaitCommand(1))
+  .andThen(arm.rest()).andThen(hand.setFalse()).andThen(hand.setSensorOff());
+
   public SequentialCommandGroup highCubeAuto = hand.setSensorOn().andThen(new ParallelCommandGroup(arm.cube(), hand.autoClose())).andThen(new WaitCommand(1)).andThen(new ParallelCommandGroup(arm.cubeDunk(),hand.autoClose()))
   .andThen(new WaitCommand(1)).andThen(hand.Opening()).andThen(new WaitCommand(0.5)).andThen(arm.cube()).andThen(new WaitCommand(1))
   .andThen(arm.rest()).andThen(hand.setFalse()).andThen(hand.setSensorOff());

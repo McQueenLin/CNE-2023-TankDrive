@@ -53,6 +53,12 @@ public class Robot extends TimedRobot {
   public RobotContainer robotContainer;
   public static double pitch;
   public RelativeEncoder frEncoder = RobotContainer.rightFrontMotor.getEncoder();
+
+  public final String midConeAuto = "midConeAuto";
+  public final String midCubeAuto = "midCubeAuto";
+  public final String highCubeAuto = "highCubeAuto";
+  String autoSelected;
+  SendableChooser<String> auto = new SendableChooser<>();
   
   
   public static int first = 0;
@@ -66,7 +72,6 @@ public class Robot extends TimedRobot {
 
   // Arm arm = new Arm();
   //Command midConeAuo = new midConeAuto(arm);
-  SendableChooser<Command> m_chooser = new SendableChooser<>();
   Command Charge = new Charge();
 
   /**
@@ -77,6 +82,10 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
+    auto.setDefaultOption("High Cube Auto", highCubeAuto);
+    auto.addOption("Mid Cube Auto", midCubeAuto);
+    auto.addOption("Mid Cone Auto", midConeAuto);
+    SmartDashboard.putData("Auto choices", auto);
     robotContainer = new RobotContainer();
     robotContainer.navX.resetGyro();
     m_visionThread =
@@ -168,14 +177,24 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    autoSelected = auto.getSelected();
     tankDrive.frEncoder.setPosition(0);    
     
-  
+  switch(autoSelected){
+    case midConeAuto:
+      CommandScheduler.getInstance().schedule(robotContainer.midConeAuto.andThen(robotContainer.Charge.repeatedly()));
+      break;
+    case midCubeAuto:
+      CommandScheduler.getInstance().schedule(robotContainer.midCubeAuto.andThen(robotContainer.Charge.repeatedly()));
+      break;
+    default:
+      CommandScheduler.getInstance().schedule(robotContainer.highCubeAuto.andThen(robotContainer.Charge.repeatedly()));
+  }
 
     // if (m_autonomousCommand != null) {
     //   m_autonomousCommand.cancel();
     // }
-    CommandScheduler.getInstance().schedule(robotContainer.highCubeAuto.andThen(robotContainer.Charge.repeatedly()));
+    //CommandScheduler.getInstance().schedule(robotContainer.highCubeAuto.andThen(robotContainer.Charge.repeatedly()));
     //CommandScheduler.getInstance().schedule(robotContainer.Charge.repeatedly());
     //CommandScheduler.getInstance().schedule(Charge.repeatedly());
   }
