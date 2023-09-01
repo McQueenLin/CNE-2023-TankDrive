@@ -100,7 +100,7 @@ public class Robot extends TimedRobot {
     m_visionThread.setDaemon(true);
     m_visionThread.start();
 
-
+   /*
     m_visionThread =
     new Thread(
       () -> {
@@ -117,10 +117,12 @@ public class Robot extends TimedRobot {
           }
           Imgproc.rectangle(mat, new Point(75, 115), new Point(85, 125), new Scalar(255, 255, 255), 2);
           outputStream.putFrame(mat);
-        } */
+        } 
       });
     m_visionThread.setDaemon(true);
     m_visionThread.start();
+
+    */
 
     
   }

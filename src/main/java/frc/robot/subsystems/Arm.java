@@ -51,7 +51,7 @@ public class Arm extends SubsystemBase {
         CONEDUNK(-28, -30),
         REST(4, 2),
         START(0, 0),
-        CHUTE(0, -45),
+        CHUTE(0, -35),
         UNDUNK(armChange, elbowChange);
         public double arm;
         public double elbow;
