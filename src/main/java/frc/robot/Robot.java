@@ -59,8 +59,8 @@ public class Robot extends TimedRobot {
   public final String highCubeAuto = "highCubeAuto";
   String autoSelected;
   Boolean autoCharging;
-  SendableChooser<String> auto = new SendableChooser<>();
-  SendableChooser<Boolean> autoCharge = new SendableChooser<>();
+  SendableChooser<String> auto;
+  SendableChooser<Boolean> autoCharge;
   
   
   public static int first = 0;
@@ -84,6 +84,9 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
+    auto  = new SendableChooser<>();
+    autoCharge = new SendableChooser<>();
+    tankDrive.frEncoder.setPosition(0);   
     auto.setDefaultOption("High Cube Auto", highCubeAuto);
     auto.addOption("Mid Cube Auto", midCubeAuto);
     auto.addOption("Mid Cone Auto", midConeAuto);
@@ -92,13 +95,18 @@ public class Robot extends TimedRobot {
     autoCharge.setDefaultOption("Charge", true);
     autoCharge.addOption("Taxi", false);
     SmartDashboard.putData("Charge Or BackUp", autoCharge);
+
+
+
     robotContainer = new RobotContainer();
     robotContainer.navX.resetGyro();
+
+
     m_visionThread =
     new Thread(
       () -> {
         UsbCamera camera = CameraServer.startAutomaticCapture();
-        camera.setResolution(160, 240);
+        camera.setResolution(80, 100);
         CvSink cvSink = CameraServer.getVideo();
         CvSource outputStream = CameraServer.putVideo("Rectangle", 160, 240);
         
@@ -151,6 +159,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    robotContainer.tank_Drive.brake(true);
     pitch = robotContainer.navX.getNavPitch();
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
@@ -161,7 +170,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Elbow Temperature", Arm.elbowMotor.getMotorTemperature());
     SmartDashboard.putNumber("Arm Position", Arm.armEncoder.getPosition());
     SmartDashboard.putNumber("Elbow Position", Arm.elbowEncoder.getPosition());
-
+    SmartDashboard.putNumber("Robot Pitch", pitch);
     Hand.motorSpeed = SmartDashboard.getNumber("Motor speed", 0.5);
     SmartDashboard.putNumber("Hand Temperature", HandMotor.getMotorTemperature());
     SmartDashboard.putBoolean("Sensor", !robotContainer.PhotoSwitch.get());
@@ -184,14 +193,14 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     autoSelected = auto.getSelected();
-    autoCharging = autoCharge.getSelected();
-    tankDrive.frEncoder.setPosition(0);    
+    autoCharging = autoCharge.getSelected(); 
+
 
     if (autoCharging) {
-      tankDrive.autoChargeInches = 72;
+      tankDrive.autoChargeInches = 90;
 
     } else {
-      tankDrive.autoChargeInches = 80;
+      tankDrive.autoChargeInches = 150;
     }
     
     switch(autoSelected){

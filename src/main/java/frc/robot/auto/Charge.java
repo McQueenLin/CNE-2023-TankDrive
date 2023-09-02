@@ -50,7 +50,7 @@ public class Charge extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-
+        tankDrive.additionalSpeed = 0.0002;
     }
 
 }

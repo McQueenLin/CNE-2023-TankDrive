@@ -28,7 +28,7 @@ public class teleopDrive extends CommandBase {
   private double speedReductionConstant = 0.5;
   private double timer = 0;
   private boolean backToNormal = false;
-  
+  private boolean toggleBrake = false;
   private double adjSpeed = 0.065;
   
   
@@ -56,7 +56,7 @@ public class teleopDrive extends CommandBase {
   @Override
   public void execute() {
     RelativeEncoder frEncoder = m_Drive.m_rightFrontMotor.getEncoder();
-    SmartDashboard.putNumber("Robot Pitch", Robot.pitch);
+    
     //SmartDashboard.putNumber("Distance Encoder", frEncoder.getPosition());
     SmartDashboard.putNumber("Drive Speed %", speedReductionConstant*100);
     
@@ -94,14 +94,15 @@ public class teleopDrive extends CommandBase {
       //m_Drive.test();
     } else if (m_Controller.getAButton()) {
       //starterSpeed = 0.01;
-      //m_Drive.balance(Robot.pitch);
+      m_Drive.balance(Robot.pitch);
     } else if (m_Controller.getXButton()) {
-      m_Drive.brake(true);
+      //toggleBrake = (toggleBrake == false ? 0.5:0.9);
+      //fm_Drive.brake(toggleBrake);
     }else if(Math.abs(m_Controller.getLeftY()) > 0.1 || Math.abs(m_Controller.getRightY()) > 0.1) {
       
       m_Drive.tankDrive(-m_Controller.getLeftY() * speedReductionConstant, -m_Controller.getRightY() * speedReductionConstant);
     } else {
-      m_Drive.brake(false);
+      
       m_Drive.centerPassed = false;
       m_Drive.straight(0);
     }

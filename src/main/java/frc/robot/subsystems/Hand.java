@@ -43,8 +43,8 @@ public class Hand extends SubsystemBase{
 
     public static final DigitalInput photoSwitch = RobotContainer.PhotoSwitch;
 
-    public static double openHandPosition = 0.15;
-    public static double CloseHandPosition = 4.5;
+    public static double openHandPosition = 1;
+    public static double CloseHandPosition = 5;
     public static double holdSpeed = 0.1;
     public static double motorSpeed;
     double currentPosition;

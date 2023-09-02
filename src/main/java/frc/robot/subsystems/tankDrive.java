@@ -43,17 +43,17 @@ public class tankDrive extends SubsystemBase {
   
   //m_Drive = new DifferentialDrive(leftMotors, rightMotors);
   public boolean centerPassed = false;
-  private double starterSpeed = 0.035;
+  private double starterSpeed = 0.04;
   private double degree = 4;
   private double prevVal;
   private boolean addSpeed = false;
-  private double speedLimit = 0.07;
+  private double speedLimit = 0.15;
   public static RelativeEncoder frEncoder = RobotContainer.rightFrontMotor.getEncoder();
-  public static double autoChargeInches = 72; //Community 54", ramp 14", cStation top 76"
+  public static double autoChargeInches = 90; //Community 54", ramp 14", cStation top 76"
   private double inPerEncoder = 2.289; // 19 inches per 8.3 encoder value, one wheel rotation
   public static double distance = 0;
   private boolean logic2 = false;
- 
+  public static double additionalSpeed = 0.0002;
   
 
   /** Creates a new ExampleSubsystem. */
@@ -117,10 +117,10 @@ public class tankDrive extends SubsystemBase {
 
   public void balance(double pitch) {
     brake(true);
-    if (centerPassed) {
-      speedLimit = 0.06;
+    if (centerPassed && additionalSpeed > 0.0001) {
+      additionalSpeed -= 0.00001;
     } else {
-      speedLimit = 0.07;
+      //additionalSpeed = 0.0002;
     }
     
     //frontRight.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -132,25 +132,27 @@ public class tankDrive extends SubsystemBase {
     if(pitch > degree) {
       straight(starterSpeed); 
       if (starterSpeed < speedLimit) { // if wheels have not moved, increase speed
-        starterSpeed += 0.0002;
+        starterSpeed += additionalSpeed;
         addSpeed = true;
         
       } else {
         addSpeed = false;
       }
+      centerPassed = false;
       
       SmartDashboard.putBoolean("B- Moving!", true);
     } else if (pitch < -degree) {
       straight(-starterSpeed);
       if (starterSpeed < speedLimit) { // if wheels have not moved, increase speed
-        starterSpeed += 0.0002;
+        starterSpeed += additionalSpeed;
         addSpeed = true;
       } else {
         addSpeed = false;
       }
       SmartDashboard.putBoolean("B- Moving!", true);
+      centerPassed = false;
     } else {
-      starterSpeed = 0.035;
+      starterSpeed = 0.04;
       brake(true);
       stop();
       SmartDashboard.putBoolean("B- Moving!", false);
@@ -169,7 +171,7 @@ public class tankDrive extends SubsystemBase {
         
         if (Math.abs(distance) < autoChargeInches) {
           //System.out.println("Running");
-            straight(-0.1);
+            straight(-0.45);
       
         } else {
           logic2 = true;
