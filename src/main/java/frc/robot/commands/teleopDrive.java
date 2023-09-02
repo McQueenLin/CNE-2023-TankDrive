@@ -29,7 +29,7 @@ public class teleopDrive extends CommandBase {
   private double timer = 0;
   private boolean backToNormal = false;
   private boolean toggleBrake = false;
-  private double adjSpeed = 0.065;
+  private double adjSpeed = 0.1;
   
   
 
@@ -73,7 +73,7 @@ public class teleopDrive extends CommandBase {
         backToNormal = false;
       }
       if (m_Controller.getYButton() && timer >= 10) {
-        speedReductionConstant = (speedReductionConstant == 0.7 ? 0.5:0.9);
+        speedReductionConstant = (speedReductionConstant != 0.5 ? 0.5:0.9);
         timer = 0;
         //this.frEncoder.setPosition(0);        
       }

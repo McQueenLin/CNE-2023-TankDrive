@@ -43,17 +43,18 @@ public class tankDrive extends SubsystemBase {
   
   //m_Drive = new DifferentialDrive(leftMotors, rightMotors);
   public boolean centerPassed = false;
-  private double starterSpeed = 0.04;
+  private double starterSpeed = 0.035;
   private double degree = 4;
   private double prevVal;
   private boolean addSpeed = false;
   private double speedLimit = 0.15;
   public static RelativeEncoder frEncoder = RobotContainer.rightFrontMotor.getEncoder();
-  public static double autoChargeInches = 90; //Community 54", ramp 14", cStation top 76"
+  public static double autoChargeInches = 102; //Community 54", ramp 14", cStation top 76"
   private double inPerEncoder = 2.289; // 19 inches per 8.3 encoder value, one wheel rotation
   public static double distance = 0;
   private boolean logic2 = false;
   public static double additionalSpeed = 0.0002;
+  private boolean logic3 = false;
   
 
   /** Creates a new ExampleSubsystem. */
@@ -118,7 +119,7 @@ public class tankDrive extends SubsystemBase {
   public void balance(double pitch) {
     brake(true);
     if (centerPassed && additionalSpeed > 0.0001) {
-      additionalSpeed -= 0.00001;
+      additionalSpeed -= 0.000015;
     } else {
       //additionalSpeed = 0.0002;
     }
@@ -152,7 +153,7 @@ public class tankDrive extends SubsystemBase {
       SmartDashboard.putBoolean("B- Moving!", true);
       centerPassed = false;
     } else {
-      starterSpeed = 0.04;
+      starterSpeed = 0.035;
       brake(true);
       stop();
       SmartDashboard.putBoolean("B- Moving!", false);
@@ -163,19 +164,41 @@ public class tankDrive extends SubsystemBase {
 
   public void autoChargeStation() {
     //SmartDashboard.putData(leftMotors);
-        if (!logic2) {
-          distance = frEncoder.getPosition() * inPerEncoder; //in inches
-        } else {
-          distance = autoChargeInches + 1; //to stop distance tracking
-        }
+        // if (!logic2) {
+        //    //in inches
+        // } else {
+        //   if (!logic3) {
+        //       //autoChargeInches = 90;
+        //   } else {
+        //      //to stop distance tracking
+        //   }
+          
+        // }
+
+        distance = frEncoder.getPosition() * inPerEncoder;
         
-        if (Math.abs(distance) < autoChargeInches) {
+        if (Math.abs(distance) < 150 && !logic2) {
+          if (Math.abs(distance) < 90) {
+            straight(-0.5);
+          } else {
+            straight(-0.35);
+          }
           //System.out.println("Running");
-            straight(-0.45);
+            
       
         } else {
           logic2 = true;
+          if (!logic3 && Math.abs(distance) > autoChargeInches) {
+            straight(0.5);
+
+            System.out.println(distance);
+          } else {
+            logic3 = true;
             balance(Robot.pitch);
+            System.out.println("balancing!");
+          }
+          
+            
             //System.out.println("Balance");
         }
         

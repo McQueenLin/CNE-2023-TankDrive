@@ -94,23 +94,33 @@ public class Hand extends SubsystemBase{
 
     public Command Opening(){
         //Test to see if the hand will reclose after opening before the item is placed
-        return runOnce(() -> {
-            while(true){
-                currentPosition = HandMotorEncoder.getPosition();
-                if (currentPosition > openHandPosition) {
-                    HandMotor.set(-0.1);
-                    holdSpeed = -0.1;
-                    hold = false;
-                    photoSwitchOn = false;
-                } 
-                else {
-                    HandMotor.set(0);
-                    holdSpeed = 0;
-                    break;
-                 }
-            }     
-        });
+        return run(() -> {
+                HandMotor.set(-0.1);
+                holdSpeed = -0.1;
+                hold = false;
+                photoSwitchOn = false;
+        }).until(() -> HandMotorEncoder.getPosition() < openHandPosition).finallyDo((end) -> HandMotor.set(0));
     }
+
+    // public Command AutoOpening(){
+    //     //Test to see if the hand will reclose after opening before the item is placed
+    //     return runOnce(() -> {
+    //         while(true){
+    //             currentPosition = HandMotorEncoder.getPosition();
+    //         if (currentPosition > openHandPosition) {
+    //             HandMotor.set(-0.1);
+    //             holdSpeed = -0.1;
+    //             hold = false;
+    //             photoSwitchOn = false;
+    //         } 
+    //         else {
+    //             HandMotor.set(0);
+    //             holdSpeed = 0;
+    //             }   
+    //         }
+            
+    //     });
+    // }
 
     
 

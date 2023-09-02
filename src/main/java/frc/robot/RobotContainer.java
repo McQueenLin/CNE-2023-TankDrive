@@ -96,7 +96,7 @@ public class RobotContainer {
   .andThen(new WaitCommand(1)).andThen(hand.Opening()).andThen(new WaitCommand(0.5)).andThen(arm.cone()).andThen(new WaitCommand(1))
   .andThen(arm.rest()).andThen(hand.setFalse()).andThen(hand.setSensorOff());
 
-  public SequentialCommandGroup midCubeAuto = hand.setSensorOn().andThen(new ParallelCommandGroup(arm.cone(), hand.autoClose())).andThen(new WaitCommand(1)).andThen(new ParallelCommandGroup(arm.coneDunk(),hand.autoClose()))
+  public SequentialCommandGroup midCubeAuto = hand.setSensorOn().andThen(new ParallelCommandGroup(arm.cone(), hand.autoClose())).andThen(new WaitCommand(1)).andThen(new ParallelCommandGroup(arm.autoCube(),hand.autoClose()))
   .andThen(new WaitCommand(1)).andThen(hand.Opening()).andThen(new WaitCommand(0.5)).andThen(arm.cone()).andThen(new WaitCommand(1))
   .andThen(arm.rest()).andThen(hand.setFalse()).andThen(hand.setSensorOff());
 
@@ -129,7 +129,7 @@ public class RobotContainer {
       operatorAButton.whileTrue(Arm.getInstance().floor());
       operatorXButton.whileTrue(Arm.getInstance().chute());
 
-      operatorLeftBumper.whileTrue(Hand.getInstance().Opening().repeatedly());
+      operatorLeftBumper.whileTrue(Hand.getInstance().Opening());
       
     
       //operatorRightBumper.whileTrue(Hand.getInstance().autoClose().repeatedly());

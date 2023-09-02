@@ -45,10 +45,11 @@ public class Arm extends SubsystemBase {
 
     enum Position {
         FLOOR(4, -90),
+        AUTOCUBE(-20, -47),
         CUBE(-78, 0),
         CUBEDUNK(-78, -65),
         CONE(-48, 0),
-        CONEDUNK(-32, -55),
+        CONEDUNK(-29, -40),
         REST(4, 2),
         START(0, 0),
         CHUTE(0, -55),
@@ -133,7 +134,12 @@ public class Arm extends SubsystemBase {
             setPosition(Position.CUBE);
         }).andThen(moveArm());
     }
-
+    public Command autoCube(){
+        return runOnce(() -> {
+            resting = false;
+            setPosition(Position.AUTOCUBE);
+        }).andThen(moveArm());
+    }
     public Command chute(){
         return runOnce(() -> {
             resting = false;
@@ -269,21 +275,11 @@ public class Arm extends SubsystemBase {
         this.elbowChange = currentPosition.elbow;
         double elbow = 0.1;
         //.putNumber("Elbow change", elbowChange);
-        return runOnce(() -> {
-            while(true){
-                SmartDashboard.putBoolean("dunk", Math.abs(elbow) > 0.05 && currentPosition.elbow < target);
-                if(currentPosition.elbow > target){
-                    //SmartDashboard.putNumber("elbow", elbow);
-                    //currentPositionHoldElbow =  currentPositionHoldElbow - elbow;
-                    currentPosition.elbow = currentPosition.elbow - elbow;
-                    elbowPID.setReference(currentPosition.elbow, CANSparkMax.ControlType.kPosition);             
-                }
-                else if (currentPosition.elbow < target){
-                    // currentPosition.elbow = currentPosition.elbow;
-                    break;
-                }
-            }
-        });
+        return run(() -> {
+            currentPosition.elbow = currentPosition.elbow - elbow;
+            elbowPID.setReference(currentPosition.elbow, CANSparkMax.ControlType.kPosition);             
+    
+        }).until(() -> currentPosition.elbow <= target).finallyDo((end) -> currentPosition.elbow = currentPosition.elbow);
     }
 
     public Command undunk(){

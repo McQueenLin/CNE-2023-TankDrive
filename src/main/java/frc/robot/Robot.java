@@ -197,10 +197,10 @@ public class Robot extends TimedRobot {
 
 
     if (autoCharging) {
-      tankDrive.autoChargeInches = 90;
+      tankDrive.autoChargeInches = 102;
 
     } else {
-      tankDrive.autoChargeInches = 150;
+      tankDrive.autoChargeInches = 140;
     }
     
     switch(autoSelected){
@@ -235,6 +235,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    tankDrive.additionalSpeed = 0.0002;
     
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
