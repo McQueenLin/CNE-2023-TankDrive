@@ -83,10 +83,14 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
+    // autonomous chooser on the dashboard
+
+    tankDrive.frEncoder.setPosition(0);  
+    robotContainer = new RobotContainer();
+    robotContainer.navX.resetGyro();
     auto  = new SendableChooser<>();
     autoCharge = new SendableChooser<>();
-    tankDrive.frEncoder.setPosition(0);   
+ 
     auto.setDefaultOption("High Cube Auto", highCubeAuto);
     auto.addOption("Mid Cube Auto", midCubeAuto);
     auto.addOption("Mid Cone Auto", midConeAuto);
@@ -95,12 +99,6 @@ public class Robot extends TimedRobot {
     autoCharge.setDefaultOption("Charge", true);
     autoCharge.addOption("Taxi", false);
     SmartDashboard.putData("Charge Or BackUp", autoCharge);
-
-
-
-    robotContainer = new RobotContainer();
-    robotContainer.navX.resetGyro();
-
 
     m_visionThread =
     new Thread(
@@ -192,6 +190,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+
     autoSelected = auto.getSelected();
     autoCharging = autoCharge.getSelected(); 
 
@@ -200,7 +199,7 @@ public class Robot extends TimedRobot {
       tankDrive.autoChargeInches = 102;
 
     } else {
-      tankDrive.autoChargeInches = 140;
+      tankDrive.autoChargeInches = 180;
     }
     
     switch(autoSelected){
